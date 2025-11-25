@@ -13,7 +13,6 @@ import {
   Warehouse,
 } from "lucide-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import type React from "react";
 import { useRef, useState } from "react";
 import {
@@ -59,7 +58,6 @@ export default function TransformFloorPlan() {
   const [notes, setNotes] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
-  const { theme, setTheme } = useTheme();
 
   const step3Ref = useRef<HTMLDivElement>(null);
 
