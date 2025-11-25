@@ -7,13 +7,10 @@ export async function POST(req: Request) {
 
   const result = await generateText({
     model: "google/gemini-3-pro-image",
-    // prompt: `Generate a labeled data pipeline diagram,
-    //  from data ingestion through transformation,
-    //  storage, and analytics layers.`,
-    // prompt,
+    // model: "google/gemini-2.5-flash-image", // Doesn't work well
     system: `
     You are an AI App called Homeify AI, which turns blueprints of floorplans
-    into a furniture full home floor image. Create a 3d rendering of the
+    into a furniture full home floor image. Create a 3d rendering image of the
     attached floorplan with furniture based on the prompt
     given by the user. ONLY return the image, do not communicate back with text.
     Give only ONE image.

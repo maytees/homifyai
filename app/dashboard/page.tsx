@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ThemeSwitcher } from "@/components/ui/shadcn-io/theme-switcher";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -134,7 +133,7 @@ Floorplan Angle: ${angle}
   const currentStep = !url ? 1 : !selectedStyle ? 2 : 3;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <div className="mx-auto max-md:max-w-2xl lg:max-w-4xl lg:min-w-3xl px-4 py-12">
       {/* Header */}
       <header className="text-center mb-12">
         <h1 className="text-2xl font-medium tracking-tight mb-2">Homeify AI</h1>
@@ -413,9 +412,16 @@ Floorplan Angle: ${angle}
           </div>
 
           <div className="flex justify-center gap-3">
-            <Button variant="outline" className="h-10 bg-transparent">
-              <Download className="w-4 h-4 mr-2" />
-              Download Layout
+            <Button
+              variant="outline"
+              disabled={!generatedImage}
+              asChild
+              className="h-10 bg-transparent"
+            >
+              <Link href={generatedImage as string} download target="_blank">
+                <Download className="w-4 h-4 mr-2" />
+                Download Layout
+              </Link>
             </Button>
             <Button
               variant="outline"
@@ -430,10 +436,10 @@ Floorplan Angle: ${angle}
       )}
 
       {/* Footer */}
-      <footer className="mt-16 flex gap-4 flex-col-reverse items-center pt-6 border-t text-center">
+      {/* <footer className="mt-16 flex gap-4 flex-col-reverse items-center pt-6 border-t text-center">
         <div className="text-center">
           <p className="text-xs text-muted-foreground mb-1">
-            BlueprintStage AI — powered by Nano Banana Pro
+            Homify AI — powered by Nano Banana Pro
           </p>
           <Link
             href="/"
@@ -448,7 +454,7 @@ Floorplan Angle: ${angle}
             onChange={setTheme}
           />
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
