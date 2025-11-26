@@ -1,4 +1,4 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { floorplansBucket, s3 } from "./s3client";
 
 /**
@@ -80,4 +80,21 @@ export async function blobUrlToFile(
  */
 export function getS3Url(s3Key: string): string {
   return `https://floorplans.t3.storage.dev/${s3Key}`;
+}
+
+/**
+ * Deletes a file from S3
+ * @param s3Key - The S3 key of the object to delete
+ */
+export async function deleteFromS3(s3Key: string): Promise<void> {
+  if (!floorplansBucket) {
+    throw new Error("AWS_FLOORPLANS_BUCKET environment variable is not set");
+  }
+
+  const command = new DeleteObjectCommand({
+    Bucket: floorplansBucket,
+    Key: s3Key,
+  });
+
+  await s3.send(command);
 }

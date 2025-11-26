@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "react-photo-view/dist/react-photo-view.css";
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 
 // const inter = Inter({
@@ -31,6 +32,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
