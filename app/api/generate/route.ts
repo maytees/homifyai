@@ -31,7 +31,11 @@ export async function POST(req: Request) {
     into a furniture full home floor image. Create a 3d rendering image of the
     attached floorplan with furniture based on the prompt
     given by the user. ONLY return the image, do not communicate back with text.
-    Give only ONE image.
+    Give only ONE image. In the final generated image, remove any text and graphics
+    from the original reference image. There are two options for the angle, either top down, meaning a birds eye view,
+    from teh top, not at all from an angle, or if the property is on a prespective 3d, then do a 45 degree
+    view NOT a first person in the home view, just a 3d prespective of the layout model. Remove any graphic saying Bright MLS
+    to avoid copy right laws because I'm not able to use their graphic.
     `,
     messages: [
       {
@@ -48,7 +52,7 @@ export async function POST(req: Request) {
   });
 
   if (result.text) {
-    process.stdout.write(`\nAssistant: ${result.text}`);
+    process.stdout.write(`\nAssistant: ${result.text}\n`);
   }
 
   for (const file of result.files) {
