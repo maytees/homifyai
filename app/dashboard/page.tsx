@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import type React from "react";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import {
   Accordion,
   AccordionContent,
@@ -33,7 +34,10 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import { blobUrlToFile } from "@/lib/s3-upload";
+import { tryCatch } from "@/lib/try-catch";
 import { cn } from "@/lib/utils";
+import { saveFloorplan } from "./actions";
 
 const stylePresets = [
   { id: "modern-minimalist", title: "Modern Minimalist", icon: Sofa },
@@ -108,10 +112,9 @@ Floorplan Angle: ${angle}
       body: JSON.stringify({ prompt: promptText, imageUrl: url }),
     });
 
-    setIsGenerating(false);
-
     if (!res.ok) {
-      // Handle error
+      setIsGenerating(false);
+      toast.error("Generation failed. Please try again.");
       console.error("Generation failed:", res.status);
       return;
     }
@@ -121,6 +124,48 @@ Floorplan Angle: ${angle}
 
     setShowOutput(true);
     setGeneratedImage(src);
+
+    // Automatically save to library
+    try {
+      // Convert URLs to File objects
+      const [referenceFile, generatedFile] = await Promise.all([
+        blobUrlToFile(url, "reference-image.png"),
+        blobUrlToFile(src, "generated-image.png"),
+      ]);
+
+      // Create FormData
+      const formData = new FormData();
+      formData.append("referenceImage", referenceFile);
+      formData.append("generatedImage", generatedFile);
+      formData.append(
+        "stagingStyle",
+        stylePresets.find((s) => s.id === selectedStyle)?.title ||
+          selectedStyle,
+      );
+      formData.append("furnishingDensity", densityLevels[furnishingDensity]);
+      formData.append("colorTone", colorTones[colorTone]);
+      formData.append("angle", angle);
+      if (notes) {
+        formData.append("additionalNotes", notes);
+      }
+
+      // Call server action
+      const { data: result, error } = await tryCatch(saveFloorplan(formData));
+
+      if (error) {
+        toast.error("Floor plan generated but failed to save to library.");
+        console.error("Save error:", error);
+      } else if (result.status === "success") {
+        toast.success("Floor plan generated and saved to library!");
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error("Floor plan generated but failed to save to library.");
+      console.error("Auto-save error:", error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleReset = () => {
@@ -409,7 +454,7 @@ Floorplan Angle: ${angle}
             )}
           </div>
 
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-3 flex-wrap">
             <Button
               variant="outline"
               disabled={!generatedImage}
@@ -437,7 +482,7 @@ Floorplan Angle: ${angle}
       {/* <footer className="mt-16 flex gap-4 flex-col-reverse items-center pt-6 border-t text-center">
         <div className="text-center">
           <p className="text-xs text-muted-foreground mb-1">
-            Homify AI — powered by Nano Banana Pro
+            Homeify AI — powered by Nano Banana Pro
           </p>
           <Link
             href="/"

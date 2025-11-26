@@ -1,7 +1,25 @@
 import { generateText } from "ai";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 export async function POST(req: Request) {
-  // TODO: Auth check
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    return Response.json(
+      {
+        error: "Unauthorized",
+      },
+      {
+        status: 401,
+      },
+    );
+  }
+
+  // TODO: Check user access level/credits
+
   const { prompt, imageUrl }: { prompt: string; imageUrl: string } =
     await req.json();
 

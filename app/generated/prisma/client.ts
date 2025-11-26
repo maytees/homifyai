@@ -59,3 +59,13 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Verification = Prisma.VerificationModel
+/**
+ * Model Folder
+ * 
+ */
+export type Folder = Prisma.FolderModel
+/**
+ * Model Floorplan
+ * 
+ */
+export type Floorplan = Prisma.FloorplanModel

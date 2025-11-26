@@ -54,7 +54,9 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Folder: 'Folder',
+  Floorplan: 'Floorplan'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -129,6 +131,36 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const FolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]
+
+
+export const FloorplanScalarFieldEnum = {
+  id: 'id',
+  stagingStyle: 'stagingStyle',
+  furnishingDensity: 'furnishingDensity',
+  colorTone: 'colorTone',
+  angle: 'angle',
+  additionalNotes: 'additionalNotes',
+  isFavorite: 'isFavorite',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  referenceS3Key: 'referenceS3Key',
+  generatedS3Key: 'generatedS3Key',
+  folderId: 'folderId',
+  userId: 'userId'
+} as const
+
+export type FloorplanScalarFieldEnum = (typeof FloorplanScalarFieldEnum)[keyof typeof FloorplanScalarFieldEnum]
 
 
 export const SortOrder = {
