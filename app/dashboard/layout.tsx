@@ -1,12 +1,15 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { requireUser } from "@/data/require-user";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireUser();
+
   return (
     <div className="[--header-height:calc(--spacing(10))]">
       <SidebarProvider className="flex flex-col">

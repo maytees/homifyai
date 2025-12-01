@@ -8,9 +8,7 @@ import type { ApiResponse } from "@/lib/types";
 
 // ==================== FOLDER ACTIONS ====================
 
-export async function createFolder(
-  folderName: string,
-): Promise<ApiResponse> {
+export async function createFolder(folderName: string): Promise<ApiResponse> {
   try {
     const user = await requireUser();
 
@@ -254,6 +252,9 @@ export async function toggleArchiveFloorplan(
       },
       data: {
         isArchived: isArchived,
+        folder: {
+          disconnect: true,
+        },
       },
     });
 
@@ -411,9 +412,7 @@ export async function toggleFavoriteFloorplan(
 
     return {
       status: "success",
-      message: isFavorite
-        ? "Added to favorites!"
-        : "Removed from favorites!",
+      message: isFavorite ? "Added to favorites!" : "Removed from favorites!",
     };
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
@@ -514,9 +513,7 @@ export async function deleteFloorplan(
   }
 }
 
-export async function saveFloorplan(
-  formData: FormData,
-): Promise<ApiResponse> {
+export async function saveFloorplan(formData: FormData): Promise<ApiResponse> {
   try {
     const user = await requireUser();
 

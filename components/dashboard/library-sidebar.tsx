@@ -113,7 +113,7 @@ export function LibrarySidebar({
               />
               <span className="truncate">{folder.name}</span>
               <span className="ml-auto text-xs text-muted-foreground">
-                {floorPlans.filter((p) => p.folderId === folder.id).length}
+                {floorPlans.filter((p) => p.folderId === folder.id && !p.isArchived).length}
               </span>
             </Button>
             <Button

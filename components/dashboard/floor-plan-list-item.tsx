@@ -106,10 +106,12 @@ export function FloorPlanListItem({
             <Pencil className="w-4 h-4 mr-2" />
             Rename
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onMove(plan)}>
-            <Folder className="w-4 h-4 mr-2" />
-            Move to folder
-          </DropdownMenuItem>
+          {!plan.isArchived && (
+            <DropdownMenuItem onClick={() => onMove(plan)}>
+              <Folder className="w-4 h-4 mr-2" />
+              Move to folder
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => onDownload(plan)}>
             <Download className="w-4 h-4 mr-2" />
             Download

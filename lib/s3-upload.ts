@@ -6,12 +6,14 @@ import { floorplansBucket, s3 } from "./s3client";
  * @param file - The file to upload (File or Blob)
  * @param userId - The user ID for organizing files
  * @param prefix - Optional prefix for the S3 key (e.g., 'reference' or 'generated')
+ * @param folder - Optional folder for organizing files (e.g., 'floorplans' or 'avatars')
  * @returns The S3 key of the uploaded file
  */
 export async function uploadToS3(
   file: File | Blob,
   userId: string,
-  prefix: "reference" | "generated" = "reference",
+  prefix: "reference" | "generated" | "avatar" = "reference",
+  folder: "floorplans" | "avatars" = "floorplans",
 ): Promise<string> {
   if (!floorplansBucket) {
     throw new Error("AWS_FLOORPLANS_BUCKET environment variable is not set");
@@ -21,7 +23,7 @@ export async function uploadToS3(
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 15);
   const extension = file instanceof File ? file.name.split(".").pop() : "png";
-  const s3Key = `floorplans/${userId}/${prefix}/${timestamp}-${randomId}.${extension}`;
+  const s3Key = `${folder}/${userId}/${prefix}/${timestamp}-${randomId}.${extension}`;
 
   // Convert file to buffer
   const arrayBuffer = await file.arrayBuffer();

@@ -8,10 +8,7 @@ export async function GET() {
   });
 
   if (!session?.user) {
-    return Response.json(
-      { error: "Unauthorized" },
-      { status: 401 },
-    );
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const user = await prisma.user.findUnique({
@@ -20,10 +17,7 @@ export async function GET() {
   });
 
   if (!user) {
-    return Response.json(
-      { error: "User not found" },
-      { status: 404 },
-    );
+    return Response.json({ error: "User not found" }, { status: 404 });
   }
 
   return Response.json({
@@ -33,5 +27,6 @@ export async function GET() {
     monthlyCredits: user.subscription?.monthlyCredits,
     creditsUsed: user.subscription?.creditsUsed,
     currentPeriodEnd: user.subscription?.currentPeriodEnd,
+    cancelAtPeriodEnd: user.subscription?.cancelAtPeriodEnd,
   });
 }

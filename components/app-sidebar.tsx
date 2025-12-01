@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Activity,
-  FileText,
-  Home,
-  Library,
-  LifeBuoy,
-  Send,
-  Settings,
-} from "lucide-react";
+import { Home, Library, Settings } from "lucide-react";
 import type * as React from "react";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
@@ -44,26 +36,26 @@ const data = {
     },
   ],
   navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-    {
-      title: "Changelog",
-      url: "#",
-      icon: FileText,
-    },
-    {
-      title: "Uptime",
-      url: "#",
-      icon: Activity,
-    },
+    // {
+    //   title: "Support",
+    //   url: "#",
+    //   icon: LifeBuoy,
+    // },
+    // {
+    //   title: "Feedback",
+    //   url: "#",
+    //   icon: Send,
+    // },
+    // {
+    //   title: "Changelog",
+    //   url: "#",
+    //   icon: FileText,
+    // },
+    // {
+    //   title: "Uptime",
+    //   url: "#",
+    //   icon: Activity,
+    // },
   ],
 };
 

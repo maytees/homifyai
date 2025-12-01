@@ -1,21 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Factory,
-  Heart,
-  Home,
-  Lamp,
-  Loader2,
-  RefreshCw,
-  Sofa,
-  Warehouse,
-} from "lucide-react";
-import { useState } from "react";
+import { Loader2, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { toast } from "sonner";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
 import { FloorPlanUploader } from "@/components/floor-plan-uploader";
+import { StyleSelectionDialog } from "@/components/style-selection-dialog";
 import {
   Accordion,
   AccordionContent,
@@ -33,22 +26,24 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import { authClient } from "@/lib/auth-client";
+import {
+  getStyleById,
+  getStylePromptDescription,
+} from "@/lib/interior-styles";
 import { blobUrlToFile } from "@/lib/s3-upload";
 import { tryCatch } from "@/lib/try-catch";
 import { cn } from "@/lib/utils";
 import { saveFloorplan } from "./actions";
 
-const stylePresets = [
-  { id: "modern-minimalist", title: "Modern Minimalist", icon: Sofa },
-  { id: "cozy-scandinavian", title: "Cozy Scandinavian", icon: Lamp },
-  { id: "luxury-contemporary", title: "Luxury Contemporary", icon: Home },
-  { id: "rustic-farmhouse", title: "Rustic Farmhouse", icon: Warehouse },
-  { id: "sleek-industrial", title: "Sleek Industrial", icon: Factory },
-  { id: "vibrant-family", title: "Vibrant Family Home", icon: Heart },
-];
-
 const densityLevels = ["Sparse", "Standard", "Full"];
 const colorTones = ["Neutral", "Warm", "Bold"];
+
+interface UserCredits {
+  credits: number;
+  hasSubscription: boolean;
+  subscriptionStatus?: string;
+}
 
 export default function TransformFloorPlan() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -61,6 +56,29 @@ export default function TransformFloorPlan() {
   const [notes, setNotes] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
+  const [styleDialogOpen, setStyleDialogOpen] = useState(false);
+  const [userPlan, setUserPlan] = useState<"free" | "pro">("free");
+  const router = useRouter();
+
+  // Fetch user plan on mount
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (session?.data?.user) {
+          const response = await fetch("/api/user/credits");
+          const data: UserCredits = await response.json();
+          const isProUser =
+            data.hasSubscription && data.subscriptionStatus === "active";
+          setUserPlan(isProUser ? "pro" : "free");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user plan:", error);
+      }
+    };
+
+    fetchUserPlan();
+  }, []);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -104,13 +122,19 @@ export default function TransformFloorPlan() {
 
       const { url: uploadedUrl } = await uploadRes.json();
 
-      // Now generate with the uploaded URL
+      // Now generate with the uploaded URL using the style's prompt description
+      const styleDescription = getStylePromptDescription(selectedStyle);
+      const selectedStyleData = getStyleById(selectedStyle);
+
       const promptText = `
-Render the home layout in a "${stylePresets.find((s) => s.id === selectedStyle)?.title}" style.
-Furniture density: ${densityLevels[furnishingDensity]}.
-Color tone: ${colorTones[colorTone]}.
-Notes: ${notes || "None"}.
-Floorplan Angle: ${angle}
+Render the home layout using the following style:
+${styleDescription}
+
+Additional parameters:
+- Furniture density: ${densityLevels[furnishingDensity]}
+- Color tone: ${colorTones[colorTone]}
+- Floorplan Angle: ${angle}
+${notes ? `- Additional notes: ${notes}` : ""}
 `.trim();
 
       const res = await fetch("/api/generate", {
@@ -156,8 +180,7 @@ Floorplan Angle: ${angle}
         formData.append("generatedImage", generatedFile);
         formData.append(
           "stagingStyle",
-          stylePresets.find((s) => s.id === selectedStyle)?.title ||
-            selectedStyle,
+          selectedStyleData?.title || selectedStyle,
         );
         formData.append("furnishingDensity", densityLevels[furnishingDensity]);
         formData.append("colorTone", colorTones[colorTone]);
@@ -184,6 +207,7 @@ Floorplan Angle: ${angle}
       toast.error("An error occurred. Please try again.");
       console.error("Generation error:", error);
     } finally {
+      router.refresh();
       setIsGenerating(false);
     }
   };
@@ -271,39 +295,34 @@ Floorplan Angle: ${angle}
               <span className="text-sm font-medium">Choose Staging Style</span>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-              {stylePresets.map((style, index) => {
-                const Icon = style.icon;
-                const isSelected = selectedStyle === style.id;
-                return (
-                  <motion.button
-                    key={style.id}
-                    type="button"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.2, delay: index * 0.05 }}
-                    onClick={() => handleStyleSelect(style.id)}
-                    className={cn(
-                      "relative flex flex-col items-center gap-3 p-5 border transition-all text-left",
-                      isSelected
-                        ? "border-foreground bg-foreground/5 shadow-sm"
-                        : "border-border hover:border-foreground/50",
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "w-10 h-10 flex items-center justify-center border",
-                        isSelected ? "border-foreground" : "border-border",
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-medium text-center leading-tight">
-                      {style.title}
+            <div className="mb-6">
+              <Button
+                type="button"
+                onClick={() => setStyleDialogOpen(true)}
+                variant={selectedStyle ? "secondary" : "outline"}
+                className="w-full h-auto py-4 flex-col gap-2"
+              >
+                {selectedStyle ? (
+                  <>
+                    <span className="text-sm font-semibold">
+                      {getStyleById(selectedStyle)?.title}
                     </span>
-                  </motion.button>
-                );
-              })}
+                    <span className="text-xs text-muted-foreground">
+                      Click to change style
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-sm font-semibold">
+                      Choose a Staging Style
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      Browse {userPlan === "pro" ? "20+" : "6"} interior design
+                      styles
+                    </span>
+                  </>
+                )}
+              </Button>
             </div>
 
             <Accordion type="single" collapsible className="border">
@@ -362,14 +381,17 @@ Floorplan Angle: ${angle}
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="top-down">Top-down (Recommended)</SelectItem>
+                          <SelectItem value="top-down">
+                            Top-down (Recommended)
+                          </SelectItem>
                           <SelectItem value="perspective-3d">
                             Perspective 3D
                           </SelectItem>
                         </SelectContent>
                       </Select>
                       <p className="text-xs text-muted-foreground">
-                        Top-down view is recommended for best accuracy. Perspective 3D may not be fully accurate.
+                        Top-down view is recommended for best accuracy.
+                        Perspective 3D may not be fully accurate.
                       </p>
                     </div>
 
@@ -395,7 +417,7 @@ Floorplan Angle: ${angle}
 
       {/* Step 3: Generate */}
       <AnimatePresence mode="wait">
-        {currentStep >= 3 && canProceedToStep3 && (
+        {canProceedToStep3 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -435,7 +457,8 @@ Floorplan Angle: ${angle}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground text-center max-w-md mx-auto">
-                Note: AI-generated layouts may not be 100% accurate. Please carefully review the generated model for structural accuracy.
+                Note: AI-generated layouts may not be 100% accurate. Please
+                carefully review the generated model for structural accuracy.
               </p>
             </div>
           </motion.section>
@@ -482,6 +505,15 @@ Floorplan Angle: ${angle}
           </motion.section>
         )}
       </AnimatePresence>
+
+      {/* Style Selection Dialog */}
+      <StyleSelectionDialog
+        open={styleDialogOpen}
+        onOpenChange={setStyleDialogOpen}
+        onSelectStyle={handleStyleSelect}
+        selectedStyleId={selectedStyle}
+        userPlan={userPlan}
+      />
     </div>
   );
 }

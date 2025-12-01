@@ -3,7 +3,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP } from "better-auth/plugins";
 import { prisma } from "./db";
-import { sendVerificationEmail } from "./email";
+import { sendDeleteAccountConfirmation, sendVerificationEmail } from "./email";
 import { polarClient } from "./polar";
 
 export const auth = betterAuth({
@@ -12,6 +12,18 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+  },
+  user: {
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        // Send verification email with URL to confirm account deletion
+        // Don't await to prevent timing attacks
+        await sendDeleteAccountConfirmation(user.email, url).catch((error) => {
+          console.error("Failed to send account deletion confirmation:", error);
+        });
+      },
+    },
   },
   plugins: [
     emailOTP({

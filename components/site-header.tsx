@@ -39,7 +39,9 @@ export function SiteHeader() {
       try {
         const session = await authClient.getSession();
         if (session?.data?.user) {
-          const response = await fetch("/api/user/credits");
+          const response = await fetch("/api/user/credits", {
+            next: { tags: ["fetch-credits"] },
+          });
           const data = await response.json();
           setUserCredits(data);
         }

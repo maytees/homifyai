@@ -14,6 +14,7 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
+    const type = (formData.get("type") as string) || "floorplan"; // 'floorplan' or 'avatar'
 
     if (!file) {
       return Response.json({ error: "No file provided" }, { status: 400 });
@@ -24,17 +25,25 @@ export async function POST(req: Request) {
       return Response.json({ error: "File must be an image" }, { status: 400 });
     }
 
-    // Validate file size (10MB max)
-    const maxSize = 10 * 1024 * 1024;
+    // Validate file size based on type
+    const maxSize = type === "avatar" ? 2 * 1024 * 1024 : 10 * 1024 * 1024; // 2MB for avatars, 10MB for floorplans
     if (file.size > maxSize) {
+      const maxSizeMB = maxSize / (1024 * 1024);
       return Response.json(
-        { error: "File size must be less than 10MB" },
+        { error: `File size must be less than ${maxSizeMB}MB` },
         { status: 400 },
       );
     }
 
-    // Upload to S3
-    const s3Key = await uploadToS3(file, session.user.id, "reference");
+    // Upload to S3 with appropriate folder and prefix
+    const folder = type === "avatar" ? "avatars" : "floorplans";
+    const prefix = type === "avatar" ? "avatar" : "reference";
+    const s3Key = await uploadToS3(
+      file,
+      session.user.id,
+      prefix as "avatar" | "reference",
+      folder as "avatars" | "floorplans",
+    );
     const url = `https://floorplans.t3.storage.dev/${s3Key}`;
 
     return Response.json({
