@@ -88,7 +88,7 @@ export function SiteHeader() {
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Homeify AI</BreadcrumbLink>
+              <BreadcrumbLink href="/">Spacemint AI</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -153,7 +153,8 @@ export function SiteHeader() {
                       </p>
                     )}
                     {userCredits.creditsUsed !== undefined &&
-                      userCredits.creditsUsed > (userCredits.monthlyCredits || 20) && (
+                      userCredits.creditsUsed >
+                        (userCredits.monthlyCredits || 20) && (
                         <div className="pt-2 border-t border-orange-200 bg-orange-50 dark:bg-orange-950 -mx-3 px-3 py-2 rounded">
                           <p className="text-xs font-medium text-orange-900 dark:text-orange-100">
                             Overage Usage
@@ -163,8 +164,9 @@ export function SiteHeader() {
                             {userCredits.creditsUsed -
                               (userCredits.monthlyCredits || 20)}{" "}
                             credit(s) beyond your included{" "}
-                            {userCredits.monthlyCredits || 20}. You'll be charged
-                            $0.50 per credit at the end of your billing cycle.
+                            {userCredits.monthlyCredits || 20}. You'll be
+                            charged $0.50 per credit at the end of your billing
+                            cycle.
                           </p>
                         </div>
                       )}

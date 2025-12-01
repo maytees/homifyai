@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     model: "google/gemini-3-pro-image",
     // model: "google/gemini-2.5-flash-image", // Doesn't work well
     // system: `
-    // You are an AI App called Homeify AI, which turns blueprints of floorplans
+    // You are an AI App called Spacemint AI, which turns blueprints of floorplans
     // into a furniture full home floor image. Create a 3d rendering image of the
     // attached floorplan with furniture based on the prompt
     // given by the user. ONLY return the image, do not communicate back with text.
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
     // view NOT a first person in the home view, just a 3d prespective of the layout model.
     // `,
     system: `
-You are Homeify AI, a precision architectural visualization tool that transforms floor plan blueprints into furnished 3D renderings with exact structural fidelity.
+You are Spacemint AI, a precision architectural visualization tool that transforms floor plan blueprints into furnished 3D renderings with exact structural fidelity.
 
 IMAGE VALIDATION (DO FIRST)
 Verify the uploaded image is a valid floor plan. If NOT a floor plan, respond with ONLY: ERROR:NOT_FLOOR_PLAN

@@ -1,24 +1,30 @@
 "use client";
 
-import { Check } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { authClient } from "@/lib/auth-client"
-import { toast } from "sonner"
+import { Check } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { authClient } from "@/lib/auth-client";
 
 const pricingPlans = [
   {
     name: "Free",
     price: "$0",
     period: "forever",
-    description: "Try Homeify AI risk-free",
+    description: "Try Spacemint AI risk-free",
     features: [
       "5 generations per month",
       "All 6 interior styles",
       "Watermarked results",
-      "Standard processing"
+      "Standard processing",
     ],
     cta: "Get Started",
     highlighted: false,
@@ -34,13 +40,13 @@ const pricingPlans = [
       "All style packs unlocked",
       "No watermark",
       "History saved (unlimited downloads)",
-      "$0.50 per extra credit"
+      "$0.50 per extra credit",
     ],
     cta: "Upgrade to Pro",
     highlighted: true,
     badge: "Popular",
   },
-]
+];
 
 const comingSoonPlans = [
   {
@@ -49,7 +55,7 @@ const comingSoonPlans = [
     period: "/month",
     features: ["Multi-user access", "Shared credits", "Priority support"],
   },
-]
+];
 
 export function PricingSection() {
   const handleUpgrade = async () => {
@@ -73,8 +79,12 @@ export function PricingSection() {
     <section id="pricing" className="py-24 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Simple, transparent pricing</h2>
-          <p className="text-muted-foreground text-lg">Start free, pay only for what you use</p>
+          <h2 className="text-3xl font-bold tracking-tight mb-4">
+            Simple, transparent pricing
+          </h2>
+          <p className="text-muted-foreground text-lg">
+            Start free, pay only for what you use
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-16">
@@ -93,14 +103,16 @@ export function PricingSection() {
                 <CardDescription>{plan.description}</CardDescription>
                 <div className="pt-4">
                   <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground ml-1">{plan.period}</span>
+                  <span className="text-muted-foreground ml-1">
+                    {plan.period}
+                  </span>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
                 <ul className="space-y-3 mb-6">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-foreground flex-shrink-0" />
+                      <Check className="h-4 w-4 text-foreground shrink-0" />
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
@@ -126,7 +138,9 @@ export function PricingSection() {
         </div>
 
         <div className="border-t pt-12">
-          <p className="text-center text-sm text-muted-foreground mb-6">Coming soon</p>
+          <p className="text-center text-sm text-muted-foreground mb-6">
+            Coming soon
+          </p>
           <div className="max-w-md mx-auto">
             {comingSoonPlans.map((plan) => (
               <div
@@ -135,11 +149,15 @@ export function PricingSection() {
               >
                 <div>
                   <p className="font-medium">{plan.name}</p>
-                  <p className="text-sm text-muted-foreground">{plan.features.join(" · ")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {plan.features.join(" · ")}
+                  </p>
                 </div>
                 <div className="text-right">
                   <span className="font-semibold">{plan.price}</span>
-                  <span className="text-sm text-muted-foreground">{plan.period}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {plan.period}
+                  </span>
                 </div>
               </div>
             ))}
@@ -147,5 +165,5 @@ export function PricingSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

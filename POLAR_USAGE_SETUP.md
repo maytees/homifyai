@@ -1,6 +1,6 @@
 # Polar Usage-Based Billing Setup
 
-This guide explains how to set up usage-based billing in Polar to track credit consumption for Homeify AI.
+This guide explains how to set up usage-based billing in Polar to track credit consumption for Spacemint AI.
 
 ## Overview
 

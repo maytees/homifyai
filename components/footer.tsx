@@ -11,7 +11,7 @@ export function Footer() {
               <div className="w-8 h-8 border flex items-center justify-center">
                 <Home className="w-4 h-4" />
               </div>
-              <span className="font-medium text-sm">Homeify AI</span>
+              <span className="font-medium text-sm">Spacemint AI</span>
             </Link>
             <p className="text-xs text-muted-foreground max-w-xs">
               Transform floor plans into beautifully staged interiors with the
@@ -79,7 +79,7 @@ export function Footer() {
 
         <div className="mt-12 pt-6 border-t">
           <p className="text-xs text-muted-foreground text-center">
-            © 2025 Homeify AI. All rights reserved.
+            © 2025 Spacemint AI. All rights reserved.
           </p>
         </div>
       </div>

@@ -10,7 +10,7 @@ export function Navbar() {
           <div className="w-8 h-8 border flex items-center justify-center">
             <Home className="w-4 h-4" />
           </div>
-          <span className="font-medium text-sm">Homeify AI</span>
+          <span className="font-medium text-sm">Spacemint AI</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">

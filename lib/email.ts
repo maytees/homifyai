@@ -9,7 +9,7 @@ export async function sendVerificationEmail(
 ): Promise<void> {
   try {
     await resend.emails.send({
-      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+      from: process.env.EMAIL_FROM || "onboarding@spacemintai.com",
       to: email,
       subject: "Verify your email address",
       react: VerificationOTPEmail({ otp, email }),
@@ -26,7 +26,7 @@ export async function sendEmailChangeVerification(
 ): Promise<void> {
   try {
     await resend.emails.send({
-      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+      from: process.env.EMAIL_FROM || "onboarding@spacemintai.com",
       to: email,
       subject: "Verify your new email address",
       html: `
@@ -54,7 +54,7 @@ export async function sendDeleteAccountConfirmation(
 ): Promise<void> {
   try {
     await resend.emails.send({
-      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+      from: process.env.EMAIL_FROM || "onboarding@spacemintai.com",
       to: email,
       subject: "Confirm account deletion",
       html: `

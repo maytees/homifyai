@@ -304,7 +304,9 @@ ${notes ? `- Additional notes: ${notes}` : ""}
       )}
 
       <header className="text-center mb-12">
-        <h1 className="text-2xl font-medium tracking-tight mb-2">Homeify AI</h1>
+        <h1 className="text-2xl font-medium tracking-tight mb-2">
+          Spacemint AI
+        </h1>
         <p className="text-sm text-muted-foreground">
           Turn any floor layout into a fully staged interior seamlessly.
         </p>
