@@ -393,6 +393,50 @@ export default function SettingsPage() {
             )}
           </div>
 
+          {isProUser && subscription && (
+            <>
+              {subscription.creditsUsed !== undefined &&
+                subscription.creditsUsed >
+                  (subscription.monthlyCredits || 20) && (
+                  <div className="p-4 bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-lg">
+                    <h4 className="font-medium text-orange-900 dark:text-orange-100 mb-2">
+                      Overage Usage
+                    </h4>
+                    <p className="text-sm text-orange-800 dark:text-orange-200">
+                      You've used{" "}
+                      <strong>
+                        {subscription.creditsUsed -
+                          (subscription.monthlyCredits || 20)}
+                      </strong>{" "}
+                      credit(s) beyond your included{" "}
+                      <strong>{subscription.monthlyCredits || 20}</strong>. You'll
+                      be charged{" "}
+                      <strong>
+                        $
+                        {(
+                          (subscription.creditsUsed -
+                            (subscription.monthlyCredits || 20)) *
+                          0.5
+                        ).toFixed(2)}
+                      </strong>{" "}
+                      at the end of your billing cycle.
+                    </p>
+                  </div>
+                )}
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-medium mb-2">Overage Billing</h4>
+                <p className="text-sm text-muted-foreground">
+                  Your Pro plan includes{" "}
+                  <strong>{subscription.monthlyCredits || 20} credits</strong> per
+                  month. If you exceed this limit, additional generations will be
+                  charged at <strong>$0.50 per credit</strong> at the end of your
+                  billing cycle. You can continue generating even after using all
+                  your included credits.
+                </p>
+              </div>
+            </>
+          )}
+
           {!isProUser && (
             <div className="p-4 bg-muted rounded-lg">
               <h4 className="font-medium mb-2">Upgrade to Pro for:</h4>

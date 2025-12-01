@@ -8,6 +8,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import { toast } from "sonner";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
 import { FloorPlanUploader } from "@/components/floor-plan-uploader";
+import { OverageWarning } from "@/components/overage-warning";
 import { StyleSelectionDialog } from "@/components/style-selection-dialog";
 import {
   Accordion,
@@ -15,6 +16,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -41,6 +52,9 @@ interface UserCredits {
   credits: number;
   hasSubscription: boolean;
   subscriptionStatus?: string;
+  monthlyCredits?: number;
+  creditsUsed?: number;
+  currentPeriodEnd?: Date;
 }
 
 export default function TransformFloorPlan() {
@@ -55,27 +69,33 @@ export default function TransformFloorPlan() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
   const [styleDialogOpen, setStyleDialogOpen] = useState(false);
+  const [overageDialogOpen, setOverageDialogOpen] = useState(false);
   const [userPlan, setUserPlan] = useState<"free" | "pro">("free");
+  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
   const router = useRouter();
 
-  // Fetch user plan on mount
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        const session = await authClient.getSession();
-        if (session?.data?.user) {
-          const response = await fetch("/api/user/credits");
-          const data: UserCredits = await response.json();
-          const isProUser =
-            data.hasSubscription && data.subscriptionStatus === "active";
-          setUserPlan(isProUser ? "pro" : "free");
-        }
-      } catch (error) {
-        console.error("Failed to fetch user plan:", error);
+  // Fetch user plan and credits
+  const fetchUserData = async () => {
+    try {
+      const session = await authClient.getSession();
+      if (session?.data?.user) {
+        const response = await fetch("/api/user/credits", {
+          cache: "no-store",
+        });
+        const data: UserCredits = await response.json();
+        const isProUser =
+          data.hasSubscription && data.subscriptionStatus === "active";
+        setUserPlan(isProUser ? "pro" : "free");
+        setUserCredits(data);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
+  };
 
-    fetchUserPlan();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: goon
+  useEffect(() => {
+    fetchUserData();
   }, []);
 
   const handleFileSelect = (file: File) => {
@@ -94,6 +114,35 @@ export default function TransformFloorPlan() {
   const handleStyleSelect = (styleId: string) => {
     setSelectedStyle(styleId);
     setCurrentStep(3);
+  };
+
+  const checkOverageAndGenerate = () => {
+    if (!selectedFile || !selectedStyle) return;
+
+    // Check if user will go into overage
+    if (userCredits) {
+      const isProUser =
+        userCredits.hasSubscription &&
+        userCredits.subscriptionStatus === "active";
+      const willBeOverage = isProUser && userCredits.credits <= 0;
+
+      // Show confirmation dialog for overage
+      if (willBeOverage) {
+        setOverageDialogOpen(true);
+        return;
+      }
+
+      // Block free users with no credits
+      if (!isProUser && userCredits.credits <= 0) {
+        toast.error(
+          "You've used all your free credits. Upgrade to Pro for more credits.",
+        );
+        return;
+      }
+    }
+
+    // Proceed with generation
+    handleGenerate();
   };
 
   const handleGenerate = async () => {
@@ -166,8 +215,9 @@ ${notes ? `- Additional notes: ${notes}` : ""}
       setShowOutput(true);
       setGeneratedImage(src);
 
-      // Trigger credits update in header vibe coded
+      // Trigger credits update in header and refetch local credits
       triggerCreditsUpdate();
+      fetchUserData(); // Update overage warnings
 
       await authClient.usage.ingest({
         event: "generate-floorplan",
@@ -240,6 +290,18 @@ ${notes ? `- Additional notes: ${notes}` : ""}
   return (
     <div className="mx-auto max-w-2xl lg:min-w-4xl px-4 py-12">
       <EmailVerificationBanner />
+
+      {/* Overage Warning */}
+      {userCredits && (
+        <OverageWarning
+          credits={userCredits.credits}
+          hasSubscription={userCredits.hasSubscription}
+          subscriptionStatus={userCredits.subscriptionStatus}
+          monthlyCredits={userCredits.monthlyCredits}
+          creditsUsed={userCredits.creditsUsed}
+          overageRate={0.5}
+        />
+      )}
 
       <header className="text-center mb-12">
         <h1 className="text-2xl font-medium tracking-tight mb-2">Homeify AI</h1>
@@ -451,7 +513,7 @@ ${notes ? `- Additional notes: ${notes}` : ""}
             <div className="space-y-4">
               <div className="flex justify-center">
                 <Button
-                  onClick={handleGenerate}
+                  onClick={checkOverageAndGenerate}
                   disabled={!canGenerate || isGenerating}
                   className="h-11 px-8"
                 >
@@ -523,6 +585,33 @@ ${notes ? `- Additional notes: ${notes}` : ""}
         selectedStyleId={selectedStyle}
         userPlan={userPlan}
       />
+
+      {/* Overage Confirmation Dialog */}
+      <AlertDialog open={overageDialogOpen} onOpenChange={setOverageDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Overage Charge</AlertDialogTitle>
+            <AlertDialogDescription>
+              You've used all your included credits. This generation will be
+              charged <strong>$0.50</strong> at the end of your billing cycle.
+              <br />
+              <br />
+              Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setOverageDialogOpen(false);
+                handleGenerate();
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

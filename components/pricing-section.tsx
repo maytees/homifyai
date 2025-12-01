@@ -34,7 +34,7 @@ const pricingPlans = [
       "All style packs unlocked",
       "No watermark",
       "History saved (unlimited downloads)",
-      "$1.00 per extra credit"
+      "$0.50 per extra credit"
     ],
     cta: "Upgrade to Pro",
     highlighted: true,

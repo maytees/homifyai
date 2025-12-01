@@ -142,13 +142,46 @@ export function SiteHeader() {
                   <Progress value={progress} className="h-2" />
                 </div>
 
-                {isProUser && userCredits?.currentPeriodEnd && (
-                  <p className="text-xs text-muted-foreground">
-                    Resets on{" "}
-                    {new Date(
-                      userCredits.currentPeriodEnd,
-                    ).toLocaleDateString()}
-                  </p>
+                {isProUser && userCredits && (
+                  <>
+                    {userCredits.currentPeriodEnd && (
+                      <p className="text-xs text-muted-foreground">
+                        Resets on{" "}
+                        {new Date(
+                          userCredits.currentPeriodEnd,
+                        ).toLocaleDateString()}
+                      </p>
+                    )}
+                    {userCredits.creditsUsed !== undefined &&
+                      userCredits.creditsUsed > (userCredits.monthlyCredits || 20) && (
+                        <div className="pt-2 border-t border-orange-200 bg-orange-50 dark:bg-orange-950 -mx-3 px-3 py-2 rounded">
+                          <p className="text-xs font-medium text-orange-900 dark:text-orange-100">
+                            Overage Usage
+                          </p>
+                          <p className="text-xs text-orange-800 dark:text-orange-200 mt-1">
+                            You've used{" "}
+                            {userCredits.creditsUsed -
+                              (userCredits.monthlyCredits || 20)}{" "}
+                            credit(s) beyond your included{" "}
+                            {userCredits.monthlyCredits || 20}. You'll be charged
+                            $0.50 per credit at the end of your billing cycle.
+                          </p>
+                        </div>
+                      )}
+                    {userCredits.credits <= 0 &&
+                      userCredits.creditsUsed <=
+                        (userCredits.monthlyCredits || 20) && (
+                        <div className="pt-2 border-t border-yellow-200 bg-yellow-50 dark:bg-yellow-950 -mx-3 px-3 py-2 rounded">
+                          <p className="text-xs font-medium text-yellow-900 dark:text-yellow-100">
+                            Additional Usage
+                          </p>
+                          <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-1">
+                            You've used all your included credits. Additional
+                            generations will be charged $0.50 per credit.
+                          </p>
+                        </div>
+                      )}
+                  </>
                 )}
 
                 {!isProUser && (
