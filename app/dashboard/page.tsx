@@ -1,8 +1,7 @@
 "use client";
+
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  AlertCircle,
-  Check,
-  Download,
   Factory,
   Heart,
   Home,
@@ -12,13 +11,11 @@ import {
   Sofa,
   Warehouse,
 } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { toast } from "sonner";
 import { EmailVerificationBanner } from "@/components/email-verification-banner";
-import { CreditsDisplay } from "@/components/credits-display";
+import { FloorPlanUploader } from "@/components/floor-plan-uploader";
 import {
   Accordion,
   AccordionContent,
@@ -26,7 +23,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -55,9 +51,9 @@ const densityLevels = ["Sparse", "Standard", "Full"];
 const colorTones = ["Neutral", "Warm", "Bold"];
 
 export default function TransformFloorPlan() {
-  const [url, setUrl] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [urlError, setUrlError] = useState("");
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [furnishingDensity, setFurnishingDensity] = useState(1);
   const [colorTone, setColorTone] = useState(1);
@@ -66,42 +62,50 @@ export default function TransformFloorPlan() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showOutput, setShowOutput] = useState(false);
 
-  const step3Ref = useRef<HTMLDivElement>(null);
-
-  const validateUrl = (value: string) => {
-    if (!value) {
-      setUrlError("Please enter an image URL");
-      return false;
-    }
-    const urlPattern = /^https?:\/\/.+\.(png|jpg|jpeg|webp|gif)(\?.*)?$/i;
-    if (!urlPattern.test(value)) {
-      setUrlError("URL must end in .png, .jpg, .jpeg, .webp, or .gif");
-      return false;
-    }
-    setUrlError("");
-    return true;
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file);
+    setCurrentStep(2);
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setUrl(value);
-    if (value) validateUrl(value);
-    else setUrlError("");
+  const handleFileRemove = () => {
+    setSelectedFile(null);
+    setCurrentStep(1);
+    setSelectedStyle(null);
+    setGeneratedImage(null);
+    setShowOutput(false);
   };
 
   const handleStyleSelect = (styleId: string) => {
     setSelectedStyle(styleId);
-    setTimeout(() => {
-      step3Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+    setCurrentStep(3);
   };
 
   const handleGenerate = async () => {
-    if (!validateUrl(url) || !selectedStyle) return;
+    if (!selectedFile || !selectedStyle) return;
 
     setIsGenerating(true);
 
-    const promptText = `
+    try {
+      // Upload file to S3 first
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", selectedFile);
+
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadFormData,
+      });
+
+      if (!uploadRes.ok) {
+        const uploadError = await uploadRes.json();
+        toast.error(uploadError.error || "Failed to upload image");
+        setIsGenerating(false);
+        return;
+      }
+
+      const { url: uploadedUrl } = await uploadRes.json();
+
+      // Now generate with the uploaded URL
+      const promptText = `
 Render the home layout in a "${stylePresets.find((s) => s.id === selectedStyle)?.title}" style.
 Furniture density: ${densityLevels[furnishingDensity]}.
 Color tone: ${colorTones[colorTone]}.
@@ -109,71 +113,76 @@ Notes: ${notes || "None"}.
 Floorplan Angle: ${angle}
 `.trim();
 
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: promptText, imageUrl: url }),
-    });
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: promptText, imageUrl: uploadedUrl }),
+      });
 
-    if (!res.ok) {
-      setIsGenerating(false);
-
-      // Handle specific error for email verification
-      if (res.status === 403) {
+      if (!res.ok) {
         const errorData = await res.json();
-        toast.error(errorData.message || "Email verification required");
-      } else {
-        toast.error("Generation failed. Please try again.");
+
+        if (res.status === 403) {
+          toast.error(errorData.message || "Email verification required");
+        } else if (res.status === 400 && errorData.code === "NOT_FLOOR_PLAN") {
+          toast.error(
+            errorData.message ||
+              "The uploaded image doesn't appear to be a floor plan.",
+          );
+        } else {
+          toast.error("Generation failed. Please try again.");
+        }
+
+        console.error("Generation failed:", res.status, errorData);
+        setIsGenerating(false);
+        return;
       }
 
-      console.error("Generation failed:", res.status);
-      return;
-    }
+      const blob = await res.blob();
+      const src = URL.createObjectURL(blob);
 
-    const blob = await res.blob();
-    const src = URL.createObjectURL(blob);
+      setShowOutput(true);
+      setGeneratedImage(src);
 
-    setShowOutput(true);
-    setGeneratedImage(src);
+      // Automatically save to library
+      try {
+        const [referenceFile, generatedFile] = await Promise.all([
+          blobUrlToFile(uploadedUrl, "reference-image.png"),
+          blobUrlToFile(src, "generated-image.png"),
+        ]);
 
-    // Automatically save to library
-    try {
-      // Convert URLs to File objects
-      const [referenceFile, generatedFile] = await Promise.all([
-        blobUrlToFile(url, "reference-image.png"),
-        blobUrlToFile(src, "generated-image.png"),
-      ]);
+        const formData = new FormData();
+        formData.append("referenceImage", referenceFile);
+        formData.append("generatedImage", generatedFile);
+        formData.append(
+          "stagingStyle",
+          stylePresets.find((s) => s.id === selectedStyle)?.title ||
+            selectedStyle,
+        );
+        formData.append("furnishingDensity", densityLevels[furnishingDensity]);
+        formData.append("colorTone", colorTones[colorTone]);
+        formData.append("angle", angle);
+        if (notes) {
+          formData.append("additionalNotes", notes);
+        }
 
-      // Create FormData
-      const formData = new FormData();
-      formData.append("referenceImage", referenceFile);
-      formData.append("generatedImage", generatedFile);
-      formData.append(
-        "stagingStyle",
-        stylePresets.find((s) => s.id === selectedStyle)?.title ||
-          selectedStyle,
-      );
-      formData.append("furnishingDensity", densityLevels[furnishingDensity]);
-      formData.append("colorTone", colorTones[colorTone]);
-      formData.append("angle", angle);
-      if (notes) {
-        formData.append("additionalNotes", notes);
-      }
+        const { data: result, error } = await tryCatch(saveFloorplan(formData));
 
-      // Call server action
-      const { data: result, error } = await tryCatch(saveFloorplan(formData));
-
-      if (error) {
+        if (error) {
+          toast.error("Floor plan generated but failed to save to library.");
+          console.error("Save error:", error);
+        } else if (result.status === "success") {
+          toast.success("Floor plan generated and saved to library!");
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error) {
         toast.error("Floor plan generated but failed to save to library.");
-        console.error("Save error:", error);
-      } else if (result.status === "success") {
-        toast.success("Floor plan generated and saved to library!");
-      } else {
-        toast.error(result.message);
+        console.error("Auto-save error:", error);
       }
     } catch (error) {
-      toast.error("Floor plan generated but failed to save to library.");
-      console.error("Auto-save error:", error);
+      toast.error("An error occurred. Please try again.");
+      console.error("Generation error:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -181,20 +190,24 @@ Floorplan Angle: ${angle}
 
   const handleReset = () => {
     setShowOutput(false);
+    setGeneratedImage(null);
+    setSelectedFile(null);
+    setSelectedStyle(null);
+    setCurrentStep(1);
+    setFurnishingDensity(1);
+    setColorTone(1);
+    setAngle("top-down");
+    setNotes("");
   };
 
-  const isFormValid = url && !urlError && selectedStyle;
-  const currentStep = !url ? 1 : !selectedStyle ? 2 : 3;
+  const canProceedToStep2 = selectedFile !== null;
+  const canProceedToStep3 = canProceedToStep2 && selectedStyle !== null;
+  const canGenerate = canProceedToStep3;
 
   return (
-    <div className="mx-auto max-md:max-w-2xl lg:max-w-4xl lg:min-w-3xl px-4 py-12">
-      {/* Email Verification Banner */}
+    <div className="mx-auto max-w-2xl lg:min-w-4xl px-4 py-12">
       <EmailVerificationBanner />
 
-      {/* Credits Display */}
-      <CreditsDisplay />
-
-      {/* Header */}
       <header className="text-center mb-12">
         <h1 className="text-2xl font-medium tracking-tight mb-2">Homeify AI</h1>
         <p className="text-sm text-muted-foreground">
@@ -202,323 +215,273 @@ Floorplan Angle: ${angle}
         </p>
       </header>
 
-      {/* Progress Indicator */}
-      <div className="flex items-center justify-center gap-2 mb-12">
-        {[1, 2, 3].map((step) => (
-          <div key={step} className="flex items-center">
-            <div
-              className={cn(
-                "w-8 h-8 flex items-center justify-center text-xs font-medium border transition-colors",
-                currentStep >= step
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-background text-muted-foreground border-border",
-              )}
-            >
-              {currentStep > step ? <Check className="w-4 h-4" /> : step}
-            </div>
-            {step < 3 && (
+      {/* Step 1: Upload Floor Plan */}
+      <AnimatePresence mode="wait">
+        {currentStep >= 1 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="mb-10"
+          >
+            <div className="flex items-center gap-3 mb-4">
               <div
                 className={cn(
-                  "w-12 h-px mx-2 transition-colors",
-                  currentStep > step ? "bg-foreground" : "bg-border",
-                )}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Step 1: Upload Floor Plan */}
-      <section className="mb-10">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Step 1
-          </span>
-          <span className="text-sm font-medium">Upload Floor Plan</span>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="url" className="text-sm">
-            Floor Plan Image Link
-          </Label>
-          <Input
-            id="url"
-            type="url"
-            autoComplete="off"
-            placeholder="Paste a floor plan image link (.png, .jpg, or .jpeg)"
-            value={url}
-            onChange={handleUrlChange}
-            className={cn(
-              "h-11",
-              urlError && "border-destructive focus-visible:ring-destructive",
-            )}
-          />
-          {urlError ? (
-            <p className="text-xs text-destructive flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              {urlError}
-            </p>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Make sure the link ends in .png, .jpg, or .jpeg
-            </p>
-          )}
-        </div>
-      </section>
-
-      <section className="mb-10">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Step 2
-          </span>
-          <span className="text-sm font-medium">Choose Staging Style</span>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-          {stylePresets.map((style) => {
-            const Icon = style.icon;
-            const isSelected = selectedStyle === style.id;
-            return (
-              <button
-                type="button"
-                key={style.id}
-                onClick={() => handleStyleSelect(style.id)}
-                className={cn(
-                  "relative flex flex-col items-center gap-3 p-5 border transition-all text-left",
-                  isSelected
-                    ? "border-foreground bg-foreground/5 shadow-sm"
-                    : "border-border hover:border-foreground/50",
+                  "w-8 h-8 flex items-center justify-center text-xs font-medium border transition-colors rounded-full",
+                  currentStep >= 1
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-muted-foreground border-border",
                 )}
               >
-                <div
-                  className={cn(
-                    "w-10 h-10 flex items-center justify-center border",
-                    isSelected ? "border-foreground" : "border-border",
-                  )}
-                >
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span className="text-xs font-medium text-center leading-tight">
-                  {style.title}
-                </span>
-                {isSelected && (
-                  <div className="absolute top-2 right-2">
-                    <Check className="w-4 h-4" />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Advanced Staging Settings */}
-        <Accordion type="single" collapsible className="border">
-          <AccordionItem value="advanced" className="border-none">
-            <AccordionTrigger className="px-4 py-3 text-sm hover:no-underline">
-              Advanced Staging Settings
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="space-y-6">
-                {/* Furnishing Density */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <Label className="text-sm">Furnishing Density</Label>
-                    <span className="text-xs text-muted-foreground">
-                      {densityLevels[furnishingDensity]}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[furnishingDensity]}
-                    onValueChange={(v) => setFurnishingDensity(v[0])}
-                    max={2}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Sparse</span>
-                    <span>Standard</span>
-                    <span>Full</span>
-                  </div>
-                </div>
-
-                {/* Color Tone */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <Label className="text-sm">Color Tone</Label>
-                    <span className="text-xs text-muted-foreground">
-                      {colorTones[colorTone]}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[colorTone]}
-                    onValueChange={(v) => setColorTone(v[0])}
-                    max={2}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Neutral</span>
-                    <span>Warm</span>
-                    <span>Bold</span>
-                  </div>
-                </div>
-                {/* Floor Plan Angle */}
-                <div className="space-y-2">
-                  <Label className="text-sm">Floor Plan Angle</Label>
-                  <Select value={angle} onValueChange={setAngle}>
-                    <SelectTrigger className="h-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="top-down">Top-down</SelectItem>
-                      <SelectItem value="perspective-3d">
-                        Perspective 3D
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Additional Notes */}
-                <div className="space-y-2">
-                  <Label className="text-sm">Additional Notes</Label>
-                  <Textarea
-                    placeholder="E.g. emphasize kitchen island, add plants, remove dining table…"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value.slice(0, 200))}
-                    className="resize-none h-20"
-                  />
-                  <p className="text-xs text-muted-foreground text-right">
-                    {notes.length}/200
-                  </p>
-                </div>
+                1
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </section>
+              <span className="text-sm font-medium">Upload Floor Plan</span>
+            </div>
 
-      <section ref={step3Ref} className="mb-10">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Step 3
-          </span>
-          <span className="text-sm font-medium">Preview & Stage</span>
-        </div>
+            <FloorPlanUploader
+              onFileSelect={handleFileSelect}
+              onRemove={handleFileRemove}
+            />
+          </motion.section>
+        )}
+      </AnimatePresence>
 
-        {/* Summary */}
-        <div className="border p-4 mb-6 space-y-3">
-          <div className="flex justify-between items-start gap-4">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">
-              Floor Plan Link
-            </span>
-            <span className="text-xs font-mono truncate max-w-[280px]">
-              {url || "—"}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">
-              Style
-            </span>
-            <span className="text-xs font-medium">
-              {selectedStyle
-                ? stylePresets.find((s) => s.id === selectedStyle)?.title
-                : "—"}
-            </span>
-          </div>
-        </div>
-
-        {/* Generate Button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={handleGenerate}
-            disabled={!isFormValid || isGenerating}
-            className="h-11 px-8"
+      {/* Step 2: Choose Staging Style */}
+      <AnimatePresence mode="wait">
+        {currentStep >= 2 && canProceedToStep2 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="mb-10"
           >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Staging…
-              </>
-            ) : (
-              "Generate Furnished Layout"
-            )}
-          </Button>
-        </div>
-      </section>
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className={cn(
+                  "w-8 h-8 flex items-center justify-center text-xs font-medium border transition-colors rounded-full",
+                  currentStep >= 2
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-muted-foreground border-border",
+                )}
+              >
+                2
+              </div>
+              <span className="text-sm font-medium">Choose Staging Style</span>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+              {stylePresets.map((style, index) => {
+                const Icon = style.icon;
+                const isSelected = selectedStyle === style.id;
+                return (
+                  <motion.button
+                    key={style.id}
+                    type="button"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
+                    onClick={() => handleStyleSelect(style.id)}
+                    className={cn(
+                      "relative flex flex-col items-center gap-3 p-5 border transition-all text-left",
+                      isSelected
+                        ? "border-foreground bg-foreground/5 shadow-sm"
+                        : "border-border hover:border-foreground/50",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "w-10 h-10 flex items-center justify-center border",
+                        isSelected ? "border-foreground" : "border-border",
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-medium text-center leading-tight">
+                      {style.title}
+                    </span>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <Accordion type="single" collapsible className="border">
+              <AccordionItem value="advanced" className="border-none">
+                <AccordionTrigger className="px-4 py-3 text-sm hover:no-underline">
+                  Advanced Staging Settings
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-sm">Furnishing Density</Label>
+                        <span className="text-xs text-muted-foreground">
+                          {densityLevels[furnishingDensity]}
+                        </span>
+                      </div>
+                      <Slider
+                        value={[furnishingDensity]}
+                        onValueChange={(v) => setFurnishingDensity(v[0])}
+                        max={2}
+                        step={1}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Sparse</span>
+                        <span>Standard</span>
+                        <span>Full</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-sm">Color Tone</Label>
+                        <span className="text-xs text-muted-foreground">
+                          {colorTones[colorTone]}
+                        </span>
+                      </div>
+                      <Slider
+                        value={[colorTone]}
+                        onValueChange={(v) => setColorTone(v[0])}
+                        max={2}
+                        step={1}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Neutral</span>
+                        <span>Warm</span>
+                        <span>Bold</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm">Floor Plan Angle</Label>
+                      <Select value={angle} onValueChange={setAngle}>
+                        <SelectTrigger className="h-10">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="top-down">Top-down (Recommended)</SelectItem>
+                          <SelectItem value="perspective-3d">
+                            Perspective 3D
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">
+                        Top-down view is recommended for best accuracy. Perspective 3D may not be fully accurate.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm">Additional Notes</Label>
+                      <Textarea
+                        placeholder="E.g. emphasize kitchen island, add plants, remove dining table…"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value.slice(0, 200))}
+                        className="resize-none h-20"
+                      />
+                      <p className="text-xs text-muted-foreground text-right">
+                        {notes.length}/200
+                      </p>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      {/* Step 3: Generate */}
+      <AnimatePresence mode="wait">
+        {currentStep >= 3 && canProceedToStep3 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="mb-10"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className={cn(
+                  "w-8 h-8 flex items-center justify-center text-xs font-medium border transition-colors rounded-full",
+                  currentStep >= 3
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-background text-muted-foreground border-border",
+                )}
+              >
+                3
+              </div>
+              <span className="text-sm font-medium">Generate</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-center">
+                <Button
+                  onClick={handleGenerate}
+                  disabled={!canGenerate || isGenerating}
+                  className="h-11 px-8"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Staging…
+                    </>
+                  ) : (
+                    "Generate Furnished Layout"
+                  )}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground text-center max-w-md mx-auto">
+                Note: AI-generated layouts may not be 100% accurate. Please carefully review the generated model for structural accuracy.
+              </p>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       {/* Output Area */}
-      {showOutput && (
-        <section className="border p-6">
-          <p className="text-sm font-medium text-center mb-4">
-            Your staged layout is ready (click to see full photo)
-          </p>
-          <div className="aspect-4/3 bg-muted flex items-center justify-center mb-6 overflow-hidden">
-            {generatedImage ? (
+      <AnimatePresence mode="wait">
+        {showOutput && generatedImage && (
+          <motion.section
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4 }}
+            className="border p-6"
+          >
+            <p className="text-sm font-medium text-center mb-4">
+              Your staged layout is ready (click to see full photo)
+            </p>
+            <div className="aspect-4/3 bg-muted flex items-center justify-center mb-6 overflow-hidden">
               <PhotoProvider>
                 <PhotoView src={generatedImage}>
-                  {/* biome-ignore lint/performance/noImgElement: fuh */}
+                  {/** biome-ignore lint/performance/noImgElement: <goon> */}
                   <img
                     alt="Floorplan Preview"
                     src={generatedImage}
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover hover:cursor-pointer"
+                    className="object-cover hover:cursor-pointer w-full h-full"
                   />
                 </PhotoView>
               </PhotoProvider>
-            ) : (
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-3 border flex items-center justify-center">
-                  <Home className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Generating image…
-                </p>
-              </div>
-            )}
-          </div>
+            </div>
 
-          <div className="flex justify-center gap-3 flex-wrap">
-            <Button
-              variant="outline"
-              disabled={!generatedImage}
-              asChild
-              className="h-10 bg-transparent"
-            >
-              <Link href={generatedImage as string} download target="_blank">
-                <Download className="w-4 h-4 mr-2" />
-                Download Layout
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              className="h-10 bg-transparent"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Try a Different Style
-            </Button>
-          </div>
-        </section>
-      )}
-
-      {/* Footer */}
-      {/* <footer className="mt-16 flex gap-4 flex-col-reverse items-center pt-6 border-t text-center">
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground mb-1">
-            Homeify AI — powered by Nano Banana Pro
-          </p>
-          <Link
-            href="/"
-            className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
-          >
-            Privacy Policy
-          </Link>
-        </div>
-        <div className="max-w-20">
-          <ThemeSwitcher
-            value={theme as "light" | "dark" | "system" | undefined}
-            onChange={setTheme}
-          />
-        </div>
-      </footer> */}
+            <div className="flex justify-center gap-3 flex-wrap">
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                className="h-10 bg-transparent"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Generate Another
+              </Button>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -239,7 +239,7 @@ export type SubscriptionGroupByOutputType = {
   polarProductId: string
   status: string
   currentPeriodStart: Date
-  currentPeriodEnd: Date
+  currentPeriodEnd: Date | null
   cancelAtPeriodEnd: boolean
   monthlyCredits: number
   creditsUsed: number
@@ -278,7 +278,7 @@ export type SubscriptionWhereInput = {
   polarProductId?: Prisma.StringFilter<"Subscription"> | string
   status?: Prisma.StringFilter<"Subscription"> | string
   currentPeriodStart?: Prisma.DateTimeFilter<"Subscription"> | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFilter<"Subscription"> | boolean
   monthlyCredits?: Prisma.IntFilter<"Subscription"> | number
   creditsUsed?: Prisma.IntFilter<"Subscription"> | number
@@ -295,7 +295,7 @@ export type SubscriptionOrderByWithRelationInput = {
   polarProductId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodStart?: Prisma.SortOrder
-  currentPeriodEnd?: Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
   monthlyCredits?: Prisma.SortOrder
   creditsUsed?: Prisma.SortOrder
@@ -315,7 +315,7 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   polarProductId?: Prisma.StringFilter<"Subscription"> | string
   status?: Prisma.StringFilter<"Subscription"> | string
   currentPeriodStart?: Prisma.DateTimeFilter<"Subscription"> | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFilter<"Subscription"> | Date | string
+  currentPeriodEnd?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFilter<"Subscription"> | boolean
   monthlyCredits?: Prisma.IntFilter<"Subscription"> | number
   creditsUsed?: Prisma.IntFilter<"Subscription"> | number
@@ -332,7 +332,7 @@ export type SubscriptionOrderByWithAggregationInput = {
   polarProductId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodStart?: Prisma.SortOrder
-  currentPeriodEnd?: Prisma.SortOrder
+  currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
   monthlyCredits?: Prisma.SortOrder
   creditsUsed?: Prisma.SortOrder
@@ -356,7 +356,7 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   polarProductId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   status?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   currentPeriodStart?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
-  currentPeriodEnd?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
+  currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolWithAggregatesFilter<"Subscription"> | boolean
   monthlyCredits?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
   creditsUsed?: Prisma.IntWithAggregatesFilter<"Subscription"> | number
@@ -371,7 +371,7 @@ export type SubscriptionCreateInput = {
   polarProductId: string
   status: string
   currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   monthlyCredits?: number
   creditsUsed?: number
@@ -388,7 +388,7 @@ export type SubscriptionUncheckedCreateInput = {
   polarProductId: string
   status: string
   currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   monthlyCredits?: number
   creditsUsed?: number
@@ -403,7 +403,7 @@ export type SubscriptionUpdateInput = {
   polarProductId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monthlyCredits?: Prisma.IntFieldUpdateOperationsInput | number
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
@@ -420,7 +420,7 @@ export type SubscriptionUncheckedUpdateInput = {
   polarProductId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monthlyCredits?: Prisma.IntFieldUpdateOperationsInput | number
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
@@ -436,7 +436,7 @@ export type SubscriptionCreateManyInput = {
   polarProductId: string
   status: string
   currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   monthlyCredits?: number
   creditsUsed?: number
@@ -451,7 +451,7 @@ export type SubscriptionUpdateManyMutationInput = {
   polarProductId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monthlyCredits?: Prisma.IntFieldUpdateOperationsInput | number
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
@@ -467,7 +467,7 @@ export type SubscriptionUncheckedUpdateManyInput = {
   polarProductId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monthlyCredits?: Prisma.IntFieldUpdateOperationsInput | number
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
@@ -577,7 +577,7 @@ export type SubscriptionCreateWithoutUserInput = {
   polarProductId: string
   status: string
   currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   monthlyCredits?: number
   creditsUsed?: number
@@ -592,7 +592,7 @@ export type SubscriptionUncheckedCreateWithoutUserInput = {
   polarProductId: string
   status: string
   currentPeriodStart: Date | string
-  currentPeriodEnd: Date | string
+  currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
   monthlyCredits?: number
   creditsUsed?: number
@@ -623,7 +623,7 @@ export type SubscriptionUpdateWithoutUserInput = {
   polarProductId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monthlyCredits?: Prisma.IntFieldUpdateOperationsInput | number
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
@@ -638,7 +638,7 @@ export type SubscriptionUncheckedUpdateWithoutUserInput = {
   polarProductId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  currentPeriodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monthlyCredits?: Prisma.IntFieldUpdateOperationsInput | number
   creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
@@ -739,7 +739,7 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
     polarProductId: string
     status: string
     currentPeriodStart: Date
-    currentPeriodEnd: Date
+    currentPeriodEnd: Date | null
     cancelAtPeriodEnd: boolean
     monthlyCredits: number
     creditsUsed: number

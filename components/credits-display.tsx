@@ -1,9 +1,15 @@
 "use client";
 
+import { ArrowUpCircle, Crown, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Zap, Crown, ArrowUpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { authClient } from "@/lib/auth-client";
 
@@ -48,7 +54,8 @@ export function CreditsDisplay() {
     return null;
   }
 
-  const isProUser = userCredits.hasSubscription && userCredits.subscriptionStatus === "active";
+  const isProUser =
+    userCredits.hasSubscription && userCredits.subscriptionStatus === "active";
   const maxCredits = isProUser ? userCredits.monthlyCredits || 20 : 5;
   const progress = (userCredits.credits / maxCredits) * 100;
 
@@ -81,7 +88,8 @@ export function CreditsDisplay() {
         <Progress value={progress} className="h-2" />
         {isProUser && userCredits.currentPeriodEnd && (
           <p className="text-xs text-muted-foreground mt-2">
-            Resets on {new Date(userCredits.currentPeriodEnd).toLocaleDateString()}
+            Resets on{" "}
+            {new Date(userCredits.currentPeriodEnd).toLocaleDateString()}
           </p>
         )}
         {!isProUser && (

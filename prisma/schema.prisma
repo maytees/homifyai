@@ -22,9 +22,9 @@ model User {
   subscription  Subscription?
 
   // Credits system
-  credits             Int      @default(5) // Free tier starts with 5 credits
-  creditsResetAt      DateTime @default(now()) // When credits were last reset
-  lifetimeCredits     Int      @default(0) // Total credits ever used (for analytics)
+  credits         Int      @default(5) // Free tier starts with 5 credits
+  creditsResetAt  DateTime @default(now()) // When credits were last reset
+  lifetimeCredits Int      @default(0) // Total credits ever used (for analytics)
 
   @@unique([email])
   @@map("user")
@@ -122,27 +122,27 @@ model Floorplan {
 }
 
 model Subscription {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Polar subscription data
-  polarSubscriptionId String   @unique
+  polarSubscriptionId String @unique
   polarCustomerId     String
   polarProductId      String
 
   // Subscription details
-  status             String   // active, canceled, past_due, etc.
+  status             String // active, canceled, past_due, etc.
   currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
-  cancelAtPeriodEnd  Boolean  @default(false)
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
 
   // Credits tracking for Pro plan
-  monthlyCredits     Int      @default(20) // 20 credits per month for Pro
-  creditsUsed        Int      @default(0)  // Credits used this billing period
+  monthlyCredits Int @default(20) // 20 credits per month for Pro
+  creditsUsed    Int @default(0) // Credits used this billing period
 
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([polarSubscriptionId])
   @@index([userId])

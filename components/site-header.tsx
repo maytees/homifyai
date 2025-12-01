@@ -1,6 +1,7 @@
 "use client";
 
-import { SidebarIcon } from "lucide-react";
+import { ArrowUpCircle, Crown, SidebarIcon, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import {
   Breadcrumb,
@@ -9,11 +10,58 @@ import {
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
+
+interface UserCredits {
+  credits: number;
+  hasSubscription: boolean;
+  subscriptionStatus?: string;
+  monthlyCredits?: number;
+  creditsUsed?: number;
+  currentPeriodEnd?: Date;
+}
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
+  const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (session?.data?.user) {
+          const response = await fetch("/api/user/credits");
+          const data = await response.json();
+          setUserCredits(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch credits:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCredits();
+  }, []);
+
+  const handleUpgrade = async () => {
+    await authClient.checkout({ slug: "pro" });
+  };
+
+  const isProUser =
+    userCredits?.hasSubscription &&
+    userCredits?.subscriptionStatus === "active";
+  const maxCredits = isProUser ? userCredits?.monthlyCredits || 20 : 5;
+  const progress = userCredits ? (userCredits.credits / maxCredits) * 100 : 0;
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
@@ -34,6 +82,82 @@ export function SiteHeader() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+
+        {/* Credits Popover */}
+        <div className="ml-auto">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                {isProUser ? (
+                  <Crown className="h-4 w-4 text-yellow-500" />
+                ) : (
+                  <Zap className="h-4 w-4 text-primary" />
+                )}
+                <span className="hidden sm:inline">
+                  {loading ? "..." : `${userCredits?.credits || 0} credits`}
+                </span>
+                <span className="sm:hidden">
+                  {loading ? "..." : userCredits?.credits || 0}
+                </span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {isProUser ? (
+                      <Crown className="h-5 w-5 text-yellow-500" />
+                    ) : (
+                      <Zap className="h-5 w-5 text-primary" />
+                    )}
+                    <h4 className="font-semibold">
+                      {isProUser ? "Pro Plan" : "Free Plan"}
+                    </h4>
+                  </div>
+                  {!isProUser && (
+                    <Button size="sm" onClick={handleUpgrade}>
+                      <ArrowUpCircle className="h-4 w-4 mr-1" />
+                      Upgrade
+                    </Button>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Credits</span>
+                    <span className="font-medium">
+                      {userCredits?.credits || 0} of {maxCredits}
+                    </span>
+                  </div>
+                  <Progress value={progress} className="h-2" />
+                </div>
+
+                {isProUser && userCredits?.currentPeriodEnd && (
+                  <p className="text-xs text-muted-foreground">
+                    Resets on{" "}
+                    {new Date(
+                      userCredits.currentPeriodEnd,
+                    ).toLocaleDateString()}
+                  </p>
+                )}
+
+                {!isProUser && (
+                  <div className="pt-2 border-t">
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Upgrade to Pro for:
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>• 20 credits/month</li>
+                      <li>• Priority queue</li>
+                      <li>• No watermarks</li>
+                      <li>• Unlimited downloads</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
     </header>
   );

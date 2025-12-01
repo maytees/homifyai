@@ -51,13 +51,13 @@ export const auth = betterAuth({
             // Create subscription in database
             await prisma.subscription.create({
               data: {
-                userId: payload.data.customer.metadata?.userId || "",
+                userId: payload.data.customer.externalId as string,
                 polarSubscriptionId: payload.data.id,
-                polarCustomerId: payload.data.customer_id,
-                polarProductId: payload.data.product_id,
+                polarCustomerId: payload.data.customerId,
+                polarProductId: payload.data.productId,
                 status: payload.data.status,
-                currentPeriodStart: new Date(payload.data.current_period_start),
-                currentPeriodEnd: new Date(payload.data.current_period_end),
+                currentPeriodStart: payload.data.currentPeriodStart,
+                currentPeriodEnd: payload.data.currentPeriodEnd,
                 monthlyCredits: 20,
                 creditsUsed: 0,
               },
@@ -65,7 +65,7 @@ export const auth = betterAuth({
 
             // Reset user credits to 20 for Pro plan
             await prisma.user.update({
-              where: { id: payload.data.customer.metadata?.userId || "" },
+              where: { id: payload.data.customer.externalId as string },
               data: {
                 credits: 20,
                 creditsResetAt: new Date(),
@@ -80,9 +80,9 @@ export const auth = betterAuth({
               where: { polarSubscriptionId: payload.data.id },
               data: {
                 status: payload.data.status,
-                currentPeriodStart: new Date(payload.data.current_period_start),
-                currentPeriodEnd: new Date(payload.data.current_period_end),
-                cancelAtPeriodEnd: payload.data.cancel_at_period_end || false,
+                currentPeriodStart: payload.data.currentPeriodStart,
+                currentPeriodEnd: payload.data.currentPeriodEnd,
+                cancelAtPeriodEnd: payload.data.cancelAtPeriodEnd || false,
               },
             });
           },
@@ -99,10 +99,8 @@ export const auth = betterAuth({
                 where: { polarSubscriptionId: payload.data.id },
                 data: {
                   creditsUsed: 0,
-                  currentPeriodStart: new Date(
-                    payload.data.current_period_start,
-                  ),
-                  currentPeriodEnd: new Date(payload.data.current_period_end),
+                  currentPeriodStart: payload.data.currentPeriodStart,
+                  currentPeriodEnd: payload.data.currentPeriodEnd,
                 },
               });
 
