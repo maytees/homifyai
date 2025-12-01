@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       prefix as "avatar" | "reference",
       folder as "avatars" | "floorplans",
     );
-    const url = `https://floorplans.t3.storage.dev/${s3Key}`;
+    const url = `https://${process.env.NEXT_PUBLIC_AWS_FLOORPLANS_BUCKET}.t3.storage.dev/${s3Key}`;
 
     return Response.json({
       success: true,

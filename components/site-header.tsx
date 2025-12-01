@@ -52,6 +52,7 @@ export function SiteHeader() {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: goon
   useEffect(() => {
     fetchCredits();
 
@@ -171,6 +172,7 @@ export function SiteHeader() {
                         </div>
                       )}
                     {userCredits.credits <= 0 &&
+                      userCredits.creditsUsed !== undefined &&
                       userCredits.creditsUsed <=
                         (userCredits.monthlyCredits || 20) && (
                         <div className="pt-2 border-t border-yellow-200 bg-yellow-50 dark:bg-yellow-950 -mx-3 px-3 py-2 rounded">

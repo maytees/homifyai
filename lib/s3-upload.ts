@@ -81,7 +81,7 @@ export async function blobUrlToFile(
  * @returns The public URL to access the object
  */
 export function getS3Url(s3Key: string): string {
-  return `https://floorplans.t3.storage.dev/${s3Key}`;
+  return `https://${process.env.NEXT_PUBLIC_AWS_FLOORPLANS_BUCKET}.t3.storage.dev/${s3Key}`;
 }
 
 /**

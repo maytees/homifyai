@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "floorplans.t3.storage.dev",
       },
+      {
+        protocol: "https",
+        hostname: "prodfloorplans.t3.storage.dev",
+      },
     ],
   },
 };
