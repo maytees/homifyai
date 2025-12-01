@@ -27,10 +27,8 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
-import {
-  getStyleById,
-  getStylePromptDescription,
-} from "@/lib/interior-styles";
+import { triggerCreditsUpdate } from "@/lib/credits-events";
+import { getStyleById, getStylePromptDescription } from "@/lib/interior-styles";
 import { blobUrlToFile } from "@/lib/s3-upload";
 import { tryCatch } from "@/lib/try-catch";
 import { cn } from "@/lib/utils";
@@ -167,6 +165,17 @@ ${notes ? `- Additional notes: ${notes}` : ""}
 
       setShowOutput(true);
       setGeneratedImage(src);
+
+      // Trigger credits update in header vibe coded
+      triggerCreditsUpdate();
+
+      await authClient.usage.ingest({
+        event: "generate-floorplan",
+        metadata: {
+          credits_used: 1,
+          timestamp: new Date().toISOString(),
+        },
+      });
 
       // Automatically save to library
       try {

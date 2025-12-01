@@ -1,4 +1,10 @@
-import { checkout, polar, portal, webhooks } from "@polar-sh/better-auth";
+import {
+  checkout,
+  polar,
+  portal,
+  usage,
+  webhooks,
+} from "@polar-sh/better-auth";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP } from "better-auth/plugins";
@@ -55,6 +61,7 @@ export const auth = betterAuth({
           authenticatedUsersOnly: true,
         }),
         portal(),
+        usage(),
         webhooks({
           secret: process.env.POLAR_WEBHOOK_SECRET || "",
           onSubscriptionCreated: async (payload) => {

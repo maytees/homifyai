@@ -1,7 +1,12 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { generateText } from "ai";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+
+// DEVELOPMENT MODE: Set to true to return dummy data without calling AI
+const USE_DUMMY_DATA = false;
 
 export async function POST(req: Request) {
   const session = await auth.api.getSession({
@@ -59,6 +64,41 @@ export async function POST(req: Request) {
 
   const { prompt, imageUrl }: { prompt: string; imageUrl: string } =
     await req.json();
+
+  // DEVELOPMENT MODE: Return dummy data
+  if (USE_DUMMY_DATA) {
+    // Deduct credit from database
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        credits: { decrement: 1 },
+        lifetimeCredits: { increment: 1 },
+      },
+    });
+
+    // If user has subscription, update subscription credits used
+    if (user.subscription) {
+      await prisma.subscription.update({
+        where: { id: user.subscription.id },
+        data: {
+          creditsUsed: { increment: 1 },
+        },
+      });
+    }
+
+    // Ingest usage event to Polar for billing tracking
+    // await ingestCreditUsage(session.user.id, 1);
+
+    // Return the dummy image from public folder
+    const imagePath = join(process.cwd(), "public", "image.png");
+    const imageBuffer = await readFile(imagePath);
+
+    return new Response(imageBuffer, {
+      headers: {
+        "Content-Type": "image/png",
+      },
+    });
+  }
 
   const result = await generateText({
     model: "google/gemini-3-pro-image",
@@ -129,6 +169,9 @@ The floor plan is your ONLY source of truth. Before rendering, carefully count e
           },
         });
       }
+
+      // Ingest usage event to Polar for billing tracking
+      // await ingestCreditUsage(session.user.id, 1);
 
       return new Response(Buffer.from(file.uint8Array), {
         headers: {

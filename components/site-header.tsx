@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { onCreditsUpdate } from "@/lib/credits-events";
 
 interface UserCredits {
   credits: number;
@@ -34,25 +35,32 @@ export function SiteHeader() {
   const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCredits = async () => {
-      try {
-        const session = await authClient.getSession();
-        if (session?.data?.user) {
-          const response = await fetch("/api/user/credits", {
-            next: { tags: ["fetch-credits"] },
-          });
-          const data = await response.json();
-          setUserCredits(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch credits:", error);
-      } finally {
-        setLoading(false);
+  const fetchCredits = async () => {
+    try {
+      const session = await authClient.getSession();
+      if (session?.data?.user) {
+        const response = await fetch("/api/user/credits", {
+          cache: "no-store",
+        });
+        const data = await response.json();
+        setUserCredits(data);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch credits:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCredits();
+
+    // Listen for credit updates
+    const cleanup = onCreditsUpdate(() => {
+      fetchCredits();
+    });
+
+    return cleanup;
   }, []);
 
   const handleUpgrade = async () => {
