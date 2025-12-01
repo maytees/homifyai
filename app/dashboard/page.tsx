@@ -15,7 +15,10 @@ import {
 import Link from "next/link";
 import type React from "react";
 import { useRef, useState } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 import { toast } from "sonner";
+import { EmailVerificationBanner } from "@/components/email-verification-banner";
+import { CreditsDisplay } from "@/components/credits-display";
 import {
   Accordion,
   AccordionContent,
@@ -114,7 +117,15 @@ Floorplan Angle: ${angle}
 
     if (!res.ok) {
       setIsGenerating(false);
-      toast.error("Generation failed. Please try again.");
+
+      // Handle specific error for email verification
+      if (res.status === 403) {
+        const errorData = await res.json();
+        toast.error(errorData.message || "Email verification required");
+      } else {
+        toast.error("Generation failed. Please try again.");
+      }
+
       console.error("Generation failed:", res.status);
       return;
     }
@@ -177,6 +188,12 @@ Floorplan Angle: ${angle}
 
   return (
     <div className="mx-auto max-md:max-w-2xl lg:max-w-4xl lg:min-w-3xl px-4 py-12">
+      {/* Email Verification Banner */}
+      <EmailVerificationBanner />
+
+      {/* Credits Display */}
+      <CreditsDisplay />
+
       {/* Header */}
       <header className="text-center mb-12">
         <h1 className="text-2xl font-medium tracking-tight mb-2">Homeify AI</h1>
@@ -431,17 +448,21 @@ Floorplan Angle: ${angle}
       {showOutput && (
         <section className="border p-6">
           <p className="text-sm font-medium text-center mb-4">
-            Your staged layout is ready
+            Your staged layout is ready (click to see full photo)
           </p>
           <div className="aspect-4/3 bg-muted flex items-center justify-center mb-6 overflow-hidden">
             {generatedImage ? (
-              // biome-ignore lint/performance/noImgElement: fuh
-              <img
-                alt="Floorplan Preview"
-                src={generatedImage}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
+              <PhotoProvider>
+                <PhotoView src={generatedImage}>
+                  {/* biome-ignore lint/performance/noImgElement: fuh */}
+                  <img
+                    alt="Floorplan Preview"
+                    src={generatedImage}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover hover:cursor-pointer"
+                  />
+                </PhotoView>
+              </PhotoProvider>
             ) : (
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-3 border flex items-center justify-center">

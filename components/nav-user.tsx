@@ -105,7 +105,9 @@ export function NavUser() {
                 </Link>
               </DropdownMenuItem>
               {/* TODO: Onclick for better auth polar portal */}
-              <DropdownMenuItem>
+              <DropdownMenuItem
+              // onClick={async () => await authClient.customer.portal()}
+              >
                 <CreditCard />
                 Billing
               </DropdownMenuItem>

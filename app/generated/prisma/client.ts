@@ -69,3 +69,8 @@ export type Folder = Prisma.FolderModel
  * 
  */
 export type Floorplan = Prisma.FloorplanModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel

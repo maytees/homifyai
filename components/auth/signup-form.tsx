@@ -73,7 +73,9 @@ export function SignupForm({
         },
         {
           onSuccess: () => {
-            router.push("/dashboard");
+            // Redirect to verify-email page instead of dashboard
+            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+            toast.success("Account created! Please verify your email.");
           },
           onError: (ctx) => {
             // display the error message

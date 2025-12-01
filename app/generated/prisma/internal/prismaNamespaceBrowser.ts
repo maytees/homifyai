@@ -56,7 +56,8 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Folder: 'Folder',
-  Floorplan: 'Floorplan'
+  Floorplan: 'Floorplan',
+  Subscription: 'Subscription'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -82,7 +83,10 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  credits: 'credits',
+  creditsResetAt: 'creditsResetAt',
+  lifetimeCredits: 'lifetimeCredits'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -161,6 +165,25 @@ export const FloorplanScalarFieldEnum = {
 } as const
 
 export type FloorplanScalarFieldEnum = (typeof FloorplanScalarFieldEnum)[keyof typeof FloorplanScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  polarSubscriptionId: 'polarSubscriptionId',
+  polarCustomerId: 'polarCustomerId',
+  polarProductId: 'polarProductId',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  monthlyCredits: 'monthlyCredits',
+  creditsUsed: 'creditsUsed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
 export const SortOrder = {

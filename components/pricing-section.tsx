@@ -1,7 +1,12 @@
+"use client";
+
 import { Check } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { authClient } from "@/lib/auth-client"
+import { toast } from "sonner"
 
 const pricingPlans = [
   {
@@ -9,29 +14,35 @@ const pricingPlans = [
     price: "$0",
     period: "forever",
     description: "Try Homeify AI risk-free",
-    features: ["5 generations per month", "All 6 interior styles", "Watermarked results", "Standard processing"],
+    features: [
+      "5 generations per month",
+      "All 6 interior styles",
+      "Watermarked results",
+      "Standard processing"
+    ],
     cta: "Get Started",
     highlighted: false,
   },
   {
-    name: "Pay-as-you-go",
-    price: "$2",
-    period: "per generation",
-    description: "Perfect for one-off projects",
-    features: ["No monthly commitment", "No watermarks", "All 6 interior styles", "Faster processing"],
-    cta: "Buy Credits",
+    name: "Pro Plan",
+    price: "$12",
+    period: "/month",
+    description: "For professionals and power users",
+    features: [
+      "20 credits/month",
+      "Faster staging & priority queue",
+      "All style packs unlocked",
+      "No watermark",
+      "History saved (unlimited downloads)",
+      "$1.00 per extra credit"
+    ],
+    cta: "Upgrade to Pro",
     highlighted: true,
     badge: "Popular",
   },
 ]
 
 const comingSoonPlans = [
-  {
-    name: "Pro",
-    price: "$12",
-    period: "/month",
-    features: ["100 generations/month", "Priority rendering", "Style packs"],
-  },
   {
     name: "Team",
     price: "$79",
@@ -41,6 +52,23 @@ const comingSoonPlans = [
 ]
 
 export function PricingSection() {
+  const handleUpgrade = async () => {
+    try {
+      const session = await authClient.getSession();
+      if (!session?.data?.user) {
+        // Redirect to register if not logged in
+        window.location.href = "/register";
+        return;
+      }
+
+      // Trigger checkout
+      await authClient.checkout({ slug: "pro" });
+    } catch (error) {
+      console.error("Checkout error:", error);
+      toast.error("Failed to start checkout. Please try again.");
+    }
+  };
+
   return (
     <section id="pricing" className="py-24 px-4">
       <div className="max-w-4xl mx-auto">
@@ -50,7 +78,7 @@ export function PricingSection() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-16">
-          {pricingPlans.map((plan) => (
+          {pricingPlans.map((plan, index) => (
             <Card
               key={plan.name}
               className={`relative ${plan.highlighted ? "border-foreground shadow-lg" : "border-border"}`}
@@ -77,15 +105,21 @@ export function PricingSection() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className={`w-full ${
-                    plan.highlighted
-                      ? "bg-foreground text-background hover:bg-foreground/90"
-                      : "bg-secondary text-foreground hover:bg-secondary/80"
-                  }`}
-                >
-                  {plan.cta}
-                </Button>
+                {index === 0 ? (
+                  <Button
+                    asChild
+                    className="w-full bg-secondary text-foreground hover:bg-secondary/80"
+                  >
+                    <Link href="/register">{plan.cta}</Link>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleUpgrade}
+                    className="w-full bg-foreground text-background hover:bg-foreground/90"
+                  >
+                    {plan.cta}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}
@@ -93,7 +127,7 @@ export function PricingSection() {
 
         <div className="border-t pt-12">
           <p className="text-center text-sm text-muted-foreground mb-6">Coming soon</p>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="max-w-md mx-auto">
             {comingSoonPlans.map((plan) => (
               <div
                 key={plan.name}
