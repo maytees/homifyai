@@ -2,11 +2,25 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { generateText } from "ai";
 import { headers } from "next/headers";
+import sharp from "sharp";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 // DEVELOPMENT MODE: Set to true to return dummy data without calling AI
 const USE_DUMMY_DATA = false;
+
+async function watermark(
+  uint8Array: Uint8Array<ArrayBufferLike>,
+): Promise<Uint8Array<ArrayBufferLike>> {
+  return await sharp(uint8Array)
+    .composite([
+      {
+        input: join(process.cwd(), "public", "spacemintwatermark.png"),
+        gravity: "southwest",
+      },
+    ])
+    .toBuffer();
+}
 
 export async function POST(req: Request) {
   const session = await auth.api.getSession({
@@ -215,11 +229,18 @@ P-Tac = Air conditioning unit. WIC/WIR = Walk-in closet/wardrobe. ENS = Ensuite 
       // Ingest usage event to Polar for billing tracking
       // await ingestCreditUsage(session.user.id, 1);
 
-      return new Response(Buffer.from(file.uint8Array), {
-        headers: {
-          "Content-Type": file.mediaType,
+      return new Response(
+        Buffer.from(
+          user.subscription
+            ? file.uint8Array
+            : await watermark(file.uint8Array),
+        ),
+        {
+          headers: {
+            "Content-Type": file.mediaType,
+          },
         },
-      });
+      );
     }
   }
 }
