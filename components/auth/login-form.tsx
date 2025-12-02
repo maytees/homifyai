@@ -151,6 +151,12 @@ export function LoginForm({
                   type="button"
                   disabled={isPending}
                   className="w-full"
+                  onClick={async () => {
+                    await authClient.signIn.social({
+                      provider: "google",
+                      callbackURL: "/dashboard",
+                    });
+                  }}
                 >
                   {/** biome-ignore lint/a11y/noSvgWithoutTitle: goon */}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
