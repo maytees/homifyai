@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -7,9 +7,13 @@ export function Navbar() {
     <nav className="border-b">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 border flex items-center justify-center">
-            <Home className="w-4 h-4" />
-          </div>
+          <Image
+            src="/logo.svg"
+            alt="Spacemint AI Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8"
+          />
           <span className="font-medium text-sm">Spacemint AI</span>
         </Link>
 

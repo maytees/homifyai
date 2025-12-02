@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpCircle, Crown, SidebarIcon, Zap } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import {
@@ -86,13 +87,22 @@ export function SiteHeader() {
           <SidebarIcon />
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumb className="hidden sm:block">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Spacemint AI</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex items-center gap-2">
+          <Image
+            src="/logo.svg"
+            alt="Spacemint AI Logo"
+            width={24}
+            height={24}
+            className="w-6 h-6"
+          />
+          <Breadcrumb className="hidden sm:block">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Spacemint AI</BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         {/* Credits Popover */}
         <div className="ml-auto">

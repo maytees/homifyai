@@ -1,10 +1,21 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles } from "lucide-react"
+import Image from "next/image"
 
 export function HeroSection() {
   return (
     <section className="py-24 md:py-32">
       <div className="max-w-3xl mx-auto px-4 text-center">
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/logo.svg"
+            alt="Spacemint AI Logo"
+            width={80}
+            height={80}
+            className="w-20 h-20"
+          />
+        </div>
+
         <div className="inline-flex items-center gap-2 border px-3 py-1.5 mb-6">
           <Sparkles className="w-3 h-3" />
           <span className="text-xs font-medium">AI-Powered Interior Staging</span>

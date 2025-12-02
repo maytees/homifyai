@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
@@ -8,9 +8,13 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 border flex items-center justify-center">
-                <Home className="w-4 h-4" />
-              </div>
+              <Image
+                src="/logo.svg"
+                alt="Spacemint AI Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
               <span className="font-medium text-sm">Spacemint AI</span>
             </Link>
             <p className="text-xs text-muted-foreground max-w-xs">
