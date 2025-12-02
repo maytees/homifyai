@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, CreditCard, LogOut } from "lucide-react";
+import { ChevronsUpDown, CreditCard, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -99,9 +99,9 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/account">
-                  <BadgeCheck />
-                  Account
+                <Link href="/dashboard/settings">
+                  <Settings />
+                  Settings
                 </Link>
               </DropdownMenuItem>
               {/* TODO: Onclick for better auth polar portal */}
