@@ -120,14 +120,14 @@ export function PricingSection() {
                 {index === 0 ? (
                   <Button
                     asChild
-                    className="w-full bg-secondary text-foreground hover:bg-secondary/80"
+                    className="w-full mt-auto bg-secondary text-foreground hover:bg-secondary/80"
                   >
                     <Link href="/register">{plan.cta}</Link>
                   </Button>
                 ) : (
                   <Button
                     onClick={handleUpgrade}
-                    className="w-full bg-foreground text-background hover:bg-foreground/90"
+                    className="w-full bg-foreground mt-auto text-background hover:bg-foreground/90"
                   >
                     {plan.cta}
                   </Button>
