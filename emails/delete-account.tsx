@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -12,20 +13,20 @@ import {
 } from "@react-email/components";
 import { Tailwind } from "@react-email/tailwind";
 
-interface VerificationOTPEmailProps {
-  otp: string;
+interface DeleteAccountEmailProps {
   email: string;
+  url: string;
 }
 
-export default function VerificationOTPEmail({
-  otp,
+export default function DeleteAccountEmail({
   email,
-}: VerificationOTPEmailProps) {
+  url,
+}: DeleteAccountEmailProps) {
   return (
     <Html lang="en" dir="ltr">
       <Head />
       <Preview>
-        Verify your email address - Your OTP code expires in 5 minutes
+        Confirm account deletion - This action cannot be undone
       </Preview>
       <Tailwind>
         <Body className="bg-[#F6F8FA] font-sans py-10">
@@ -41,37 +42,49 @@ export default function VerificationOTPEmail({
 
             {/* Main Content */}
             <Section>
-              <Heading className="text-[#020304] text-[24px] font-bold mb-6 text-center">
-                Welcome to Spacemint AI!
+              <Heading className="text-[#dc2626] text-[24px] font-bold mb-6 text-center">
+                Confirm Account Deletion
               </Heading>
 
+              <div className="bg-[#FEE2E2] border-2 border-solid border-[#dc2626] rounded-xl px-6 py-5 mb-6">
+                <Text className="text-[#991b1b] text-[16px] font-bold leading-6 m-0">
+                  ⚠️ Warning: This action cannot be undone
+                </Text>
+              </div>
+
               <Text className="text-[#020304] text-[16px] leading-6 mb-6">
-                Thank you for signing up! We're excited to help you transform
-                floor plans into beautifully staged interiors with the power of
-                AI.
+                You requested to permanently delete your Spacemint AI account.
               </Text>
 
-              <Text className="text-[#020304] text-[16px] leading-6 mb-8">
-                To complete your registration, please use the verification code
-                below to verify your email address:
+              <Text className="text-[#020304] text-[16px] leading-6 mb-6">
+                If you proceed, all your data will be permanently removed from
+                our servers, including:
               </Text>
 
-              {/* OTP Code */}
+              <ul className="text-[#020304] text-[16px] leading-6 mb-6 pl-5">
+                <li>All generated floor plans and images</li>
+                <li>Your account settings and preferences</li>
+                <li>Your subscription and billing history</li>
+                <li>All saved projects and folders</li>
+              </ul>
+
+              {/* Delete Button */}
               <Section className="text-center mb-8">
-                <div className="bg-[#F6F8FA] border-2 border-solid border-[#392e58] rounded-xl px-6 py-5 inline-block">
-                  <Text className="text-[#392e58] text-[32px] font-bold letter-spacing-[4px] m-0">
-                    {otp}
-                  </Text>
-                </div>
+                <Button
+                  href={url}
+                  className="bg-[#dc2626] text-white text-[16px] font-semibold px-8 py-4 rounded-lg inline-block no-underline"
+                >
+                  Delete My Account
+                </Button>
               </Section>
 
               <Text className="text-[#020304] text-[14px] leading-5 mb-6 text-center">
-                <strong>This code will expire in 5 minutes.</strong>
+                <strong>This link will expire in 24 hours.</strong>
               </Text>
 
               <Text className="text-[#020304] text-[16px] leading-6 mb-8">
-                If you didn't request this verification code, you can safely
-                ignore this email.
+                If you didn't request this, please ignore this email and
+                consider changing your password immediately.
               </Text>
 
               <Text className="text-[#666666] text-[14px] leading-5">
@@ -107,7 +120,7 @@ export default function VerificationOTPEmail({
   );
 }
 
-export const PreviewProps: VerificationOTPEmailProps = {
-  otp: "123456",
+export const PreviewProps: DeleteAccountEmailProps = {
   email: "maythamajam@gmail.com",
+  url: "https://spacemintai.com/delete-account?token=abc123",
 };

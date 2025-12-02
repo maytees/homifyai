@@ -37,7 +37,7 @@ export const auth = betterAuth({
         // Only handle email verification, not sign-in or password reset
         if (type === "email-verification") {
           // Don't await to prevent timing attacks
-          sendVerificationEmail(email, otp).catch((error) => {
+          await sendVerificationEmail(email, otp).catch((error) => {
             console.error("Failed to send verification email:", error);
           });
         }
