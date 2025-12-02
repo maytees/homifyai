@@ -158,7 +158,7 @@ export function StyleSelectionDialog({
 
         {/* Styles List */}
         {/* <ScrollArea className="flex-1 px-6 pb-6"> */}
-        <ScrollArea className="sm:max-h-[50vh] max-h-[75vh] pr-4">
+        <ScrollArea className="sm:max-h-[400px] max-h-[75vh] pr-4">
           <div className="space-y-6 px-6 pb-6">
             {/* Free Styles */}
             {filteredFreeStyles.length > 0 && (
