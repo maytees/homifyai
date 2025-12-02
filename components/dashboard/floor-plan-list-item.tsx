@@ -21,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getS3Url } from "@/lib/s3-upload";
 import type { FloorPlan } from "./types";
 
@@ -45,6 +46,7 @@ export function FloorPlanListItem({
   onDownload,
   onDelete,
 }: FloorPlanListItemProps) {
+  const isMobile = useIsMobile();
   const generatedUrl = getS3Url(plan.generatedS3Key);
   const referenceUrl = getS3Url(plan.referenceS3Key);
 
@@ -76,19 +78,21 @@ export function FloorPlanListItem({
         </p>
       </div>
 
-      {/* Favorite */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => onToggleFavorite(plan)}
-        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        {plan.isFavorite ? (
-          <Star className="w-4 h-4 fill-current" />
-        ) : (
-          <StarOff className="w-4 h-4" />
-        )}
-      </Button>
+      {/* Favorite - Desktop only */}
+      {!isMobile && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onToggleFavorite(plan)}
+          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          {plan.isFavorite ? (
+            <Star className="w-4 h-4 fill-current" />
+          ) : (
+            <StarOff className="w-4 h-4" />
+          )}
+        </Button>
+      )}
 
       {/* Actions */}
       <DropdownMenu>
@@ -96,12 +100,35 @@ export function FloorPlanListItem({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+            className={
+              isMobile
+                ? "h-8 w-8"
+                : "h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+            }
           >
             <MoreVertical className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          {/* Favorite - Mobile only */}
+          {isMobile && (
+            <>
+              <DropdownMenuItem onClick={() => onToggleFavorite(plan)}>
+                {plan.isFavorite ? (
+                  <>
+                    <Star className="w-4 h-4 mr-2 fill-current" />
+                    Unfavorite
+                  </>
+                ) : (
+                  <>
+                    <StarOff className="w-4 h-4 mr-2" />
+                    Favorite
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuItem onClick={() => onRename(plan)}>
             <Pencil className="w-4 h-4 mr-2" />
             Rename

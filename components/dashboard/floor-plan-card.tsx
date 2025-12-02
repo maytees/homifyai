@@ -21,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getS3Url } from "@/lib/s3-upload";
 import type { FloorPlan } from "./types";
 
@@ -45,6 +46,7 @@ export function FloorPlanCard({
   onDownload,
   onDelete,
 }: FloorPlanCardProps) {
+  const isMobile = useIsMobile();
   const generatedUrl = getS3Url(plan.generatedS3Key);
   const referenceUrl = getS3Url(plan.referenceS3Key);
 
@@ -67,19 +69,21 @@ export function FloorPlanCard({
           <PhotoView src={referenceUrl} />
         </PhotoProvider>
 
-        {/* Favorite button */}
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={() => onToggleFavorite(plan)}
-          className="absolute top-2 left-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          {plan.isFavorite ? (
-            <Star className="w-4 h-4 fill-current" />
-          ) : (
-            <StarOff className="w-4 h-4" />
-          )}
-        </Button>
+        {/* Favorite button - Desktop only */}
+        {!isMobile && (
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => onToggleFavorite(plan)}
+            className="absolute top-2 left-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            {plan.isFavorite ? (
+              <Star className="w-4 h-4 fill-current" />
+            ) : (
+              <StarOff className="w-4 h-4" />
+            )}
+          </Button>
+        )}
 
         {/* Actions menu */}
         <DropdownMenu>
@@ -87,12 +91,35 @@ export function FloorPlanCard({
             <Button
               variant="secondary"
               size="icon"
-              className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+              className={
+                isMobile
+                  ? "absolute top-2 right-2 h-7 w-7"
+                  : "absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+              }
             >
               <MoreVertical className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {/* Favorite - Mobile only */}
+            {isMobile && (
+              <>
+                <DropdownMenuItem onClick={() => onToggleFavorite(plan)}>
+                  {plan.isFavorite ? (
+                    <>
+                      <Star className="w-4 h-4 mr-2 fill-current" />
+                      Unfavorite
+                    </>
+                  ) : (
+                    <>
+                      <StarOff className="w-4 h-4 mr-2" />
+                      Favorite
+                    </>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
             <DropdownMenuItem onClick={() => onRename(plan)}>
               <Pencil className="w-4 h-4 mr-2" />
               Rename
