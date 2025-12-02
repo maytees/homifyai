@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function PrivacyPage() {
   return (
     <div className="container max-w-4xl mx-auto py-12 px-4">
@@ -198,12 +200,12 @@ export default function PrivacyPage() {
           </ul>
           <p className="mt-4">
             To exercise these rights, please contact us at{" "}
-            <a
+            <Link
               href="mailto:support@spacemintai.com"
               className="text-primary underline"
             >
               support@spacemintai.com
-            </a>
+            </Link>
             .
           </p>
         </section>
@@ -268,22 +270,22 @@ export default function PrivacyPage() {
           </p>
           <p className="mt-4">
             <strong>Email:</strong>{" "}
-            <a
+            <Link
               href="mailto:support@spacemintai.com"
               className="text-primary underline"
             >
               support@spacemintai.com
-            </a>
+            </Link>
             <br />
             <strong>Website:</strong>{" "}
-            <a
+            <Link
               href="https://spacemintai.com"
               className="text-primary underline"
               target="_blank"
               rel="noopener noreferrer"
             >
               spacemintai.com
-            </a>
+            </Link>
             <br />
             <strong>Location:</strong> Virginia, USA
           </p>

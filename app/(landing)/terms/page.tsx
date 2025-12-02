@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function TermsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-12 px-4">
@@ -111,12 +113,12 @@ export default function TermsPage() {
             All sales are final. We do not offer refunds for subscription fees
             or credit purchases. However, if you experience technical issues or
             have special circumstances, please contact us at{" "}
-            <a
+            <Link
               href="mailto:support@spacemintai.com"
               className="text-primary underline"
             >
               support@spacemintai.com
-            </a>{" "}
+            </Link>{" "}
             to discuss your situation.
           </p>
         </section>
@@ -210,22 +212,22 @@ export default function TermsPage() {
           </p>
           <p className="mt-4">
             <strong>Email:</strong>{" "}
-            <a
+            <Link
               href="mailto:support@spacemintai.com"
               className="text-primary underline"
             >
               support@spacemintai.com
-            </a>
+            </Link>
             <br />
             <strong>Website:</strong>{" "}
-            <a
+            <Link
               href="https://spacemintai.com"
               className="text-primary underline"
               target="_blank"
               rel="noopener noreferrer"
             >
               spacemintai.com
-            </a>
+            </Link>
           </p>
         </section>
       </div>
