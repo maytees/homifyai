@@ -4,6 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -75,6 +76,7 @@ export function SignupForm({
           onSuccess: () => {
             // Redirect to verify-email page instead of dashboard
             router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+            posthog.identify(email);
             toast.success("Account created! Please verify your email.");
           },
           onError: (ctx) => {
@@ -225,6 +227,11 @@ export function SignupForm({
                     await authClient.signIn.social({
                       provider: "google",
                       callbackURL: "/dashboard",
+                      fetchOptions: {
+                        onSuccess: () => {
+                          posthog.identify();
+                        },
+                      },
                     });
                   }}
                 >

@@ -3,6 +3,7 @@
 import { ChevronsUpDown, CreditCard, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -118,6 +119,7 @@ export function NavUser() {
                 await authClient.signOut({
                   fetchOptions: {
                     onSuccess: () => {
+                      posthog.reset();
                       router.push("/login"); // redirect to login page
                     },
                   },

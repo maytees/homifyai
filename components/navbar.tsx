@@ -3,6 +3,8 @@
 import { LogOut, Settings, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,7 @@ interface UserData {
 export function Navbar() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -48,8 +51,14 @@ export function Navbar() {
   }, []);
 
   const handleSignOut = async () => {
-    await authClient.signOut();
-    window.location.href = "/";
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          posthog.reset();
+          router.push("/login"); // redirect to login page
+        },
+      },
+    });
   };
 
   return (

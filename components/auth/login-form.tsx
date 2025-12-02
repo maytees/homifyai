@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -56,6 +57,7 @@ export function LoginForm({
         },
         {
           onSuccess: () => {
+            posthog.identify(email);
             router.push("/dashboard");
           },
           onError: (ctx) => {
@@ -155,6 +157,11 @@ export function LoginForm({
                     await authClient.signIn.social({
                       provider: "google",
                       callbackURL: "/dashboard",
+                      fetchOptions: {
+                        onSuccess: () => {
+                          posthog.identify();
+                        },
+                      },
                     });
                   }}
                 >

@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { generateText } from "ai";
 import { headers } from "next/headers";
 import sharp from "sharp";
+import PostHogClient from "@/app/posthog";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -186,8 +187,19 @@ P-Tac = Air conditioning unit. WIC/WIR = Walk-in closet/wardrobe. ENS = Ensuite 
     ],
   });
 
+  const posthog = PostHogClient();
+
   if (result.text) {
     process.stdout.write(`\nAssistant: ${result.text}\n`);
+
+    posthog.capture({
+      distinctId: session.user.email,
+      event: "generation_error",
+      properties: {
+        isFree: user.subscription != null,
+        aiResponse: result.text,
+      },
+    });
 
     // Check if AI detected invalid image type
     if (result.text.includes("ERROR:NOT_FLOOR_PLAN")) {
@@ -226,8 +238,13 @@ P-Tac = Air conditioning unit. WIC/WIR = Walk-in closet/wardrobe. ENS = Ensuite 
         });
       }
 
-      // Ingest usage event to Polar for billing tracking
-      // await ingestCreditUsage(session.user.id, 1);
+      posthog.capture({
+        distinctId: session.user.email,
+        event: "floorplan_generated",
+        properties: {
+          isFree: user.subscription != null,
+        },
+      });
 
       return new Response(
         Buffer.from(
@@ -243,4 +260,6 @@ P-Tac = Air conditioning unit. WIC/WIR = Walk-in closet/wardrobe. ENS = Ensuite 
       );
     }
   }
+
+  posthog.shutdown();
 }

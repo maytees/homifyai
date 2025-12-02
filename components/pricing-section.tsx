@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,12 +59,14 @@ const comingSoonPlans = [
 ];
 
 export function PricingSection() {
+  const router = useRouter();
+
   const handleUpgrade = async () => {
     try {
       const session = await authClient.getSession();
       if (!session?.data?.user) {
         // Redirect to register if not logged in
-        window.location.href = "/register";
+        router.push("/register");
         return;
       }
 
