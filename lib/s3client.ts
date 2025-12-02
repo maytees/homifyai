@@ -6,4 +6,4 @@ export const s3 = new S3Client({
   forcePathStyle: false,
 });
 
-export const floorplansBucket = process.env.AWS_FLOORPLANS_BUCKET;
+export const floorplansBucket = process.env.NEXT_PUBLIC_AWS_FLOORPLANS_BUCKET;
