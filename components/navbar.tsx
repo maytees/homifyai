@@ -1,6 +1,6 @@
 "use client";
 
-import { Crown, LogOut, Settings, User, Zap } from "lucide-react";
+import { LogOut, Settings, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -72,25 +72,25 @@ export function Navbar() {
         {/* Navigation Links - Center */}
         <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
           <Link
-            href="#how-it-works"
+            href="/#how-it-works"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
           >
             How it Works
           </Link>
           <Link
-            href="#who-is-this-for"
+            href="/#who-is-this-for"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
           >
             Who it's For
           </Link>
           <Link
-            href="#pricing"
+            href="/#pricing"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
           >
             Pricing
           </Link>
           <Link
-            href="#faq"
+            href="/#faq"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
           >
             FAQ
