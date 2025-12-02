@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const faqs = [
+const faqs: { question: string; answer: string }[] = [
   {
     question: "What image formats are supported?",
     answer:
@@ -22,14 +22,14 @@ const faqs = [
       "Yes! After selecting a base style, you can adjust furnishing density, color tones, and add specific notes about what you want included or excluded.",
   },
   {
-    question: "What resolution are the output images?",
-    answer:
-      "Output images match the resolution of your input floor plan, with a maximum of 4096x4096 pixels. They're suitable for both digital and print use.",
-  },
-  {
     question: "Can I use these images commercially?",
     answer:
       "Yes, all generated images are yours to use for commercial purposes including property listings, marketing materials, and client presentations.",
+  },
+  {
+    question: "Can I add my own custom furnniture?",
+    answer:
+      "As of right now, you arent able to add your own furniture, but in the future we will support simply pasting in something like an IKEA link for whatever furniture you'd like to have in your home.",
   },
 ];
 
@@ -49,7 +49,7 @@ export function FAQSection() {
         <Accordion type="single" collapsible className="border divide-y">
           {faqs.map((faq, index) => (
             <AccordionItem
-              key={index}
+              key={faq.question}
               value={`item-${index}`}
               className="border-none"
             >
