@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "prodfloorplans.t3.storage.dev",
       },
+      {
+        protocol: "https",
+        hostname: "ph-files.imgix.net",
+      },
     ],
   },
   async rewrites() {
