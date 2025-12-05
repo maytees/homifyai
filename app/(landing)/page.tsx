@@ -686,30 +686,14 @@ export default function Home() {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    We currently accept PNG, JPG, and JPEG files. For best
-                    results, ensure the floor plan is clearly visible with
-                    defined walls. High contrast black and white blueprints work
-                    best.
+                    We support PNG, JPG, JPEG, and WebP formats. For best
+                    results, use high-resolution floor plan images with clear
+                    lines and room labels.
                   </p>
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-2" className="border bg-card/50">
-                <AccordionTrigger className="px-4">
-                  <span className="text-sm font-bold">
-                    Do credits roll over?
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    On the Pro plan, unused credits roll over for up to 3
-                    months. Free plan credits reset monthly and do not
-                    accumulate.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" className="border bg-card/50">
                 <AccordionTrigger className="px-4">
                   <span className="text-sm font-bold">
                     Is the generated furniture real?
@@ -720,6 +704,68 @@ export default function Home() {
                     The furniture is AI-generated for visualization purposes.
                     While realistic, it represents style concepts rather than
                     specific purchasable inventory items.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3" className="border bg-card/50">
+                <AccordionTrigger className="px-4">
+                  <span className="text-sm font-bold">
+                    How long does it take to generate a staged image?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Most images are generated within 10-30 seconds, depending on
+                    the complexity of the floor plan and the selected style.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="border bg-card/50">
+                <AccordionTrigger className="px-4">
+                  <span className="text-sm font-bold">
+                    Can I customize the furniture and decor?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Yes! After selecting a base style, you can adjust furnishing
+                    density, color tones, and add specific notes about what you
+                    want included or excluded.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-5" className="border bg-card/50">
+                <AccordionTrigger className="px-4">
+                  <span className="text-sm font-bold">
+                    Can I use the generated images commercially?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Yes, all generated images are yours to use for commercial
+                    purposes including property listings, marketing materials,
+                    and client presentations. If you aren&apos;t on the Pro
+                    plan, we kindly ask that you keep the watermark on the
+                    image.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-6" className="border bg-card/50">
+                <AccordionTrigger className="px-4">
+                  <span className="text-sm font-bold">
+                    Can I add my own custom furniture?
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    As of right now, you aren&apos;t able to add your own
+                    furniture, but in the future we will support simply pasting
+                    in something like an IKEA link for whatever furniture you'd
+                    like to have in your home.
                   </p>
                 </AccordionContent>
               </AccordionItem>
