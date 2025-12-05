@@ -85,6 +85,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "Spacemint AI",
+              alternateName: "Spacemint",
               url: "https://www.spacemintai.com",
             }),
           }}
