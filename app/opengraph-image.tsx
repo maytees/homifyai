@@ -35,8 +35,8 @@ export default async function Image() {
       >
         {/** biome-ignore lint/a11y/noSvgWithoutTitle: goon*/}
         <svg
-          width="120"
-          height="120"
+          width="100"
+          height="100"
           viewBox="0 0 100 100"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,7 @@ export default async function Image() {
               y2="123.5"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#1B1B1B" />
+              <stop stop-color="#1B1B1B" />
               <stop offset="1" />
             </linearGradient>
             <linearGradient
@@ -75,8 +75,8 @@ export default async function Image() {
               y2="56.4431"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#C4C2FF" />
-              <stop offset="1" stopColor="#A48FFF" />
+              <stop stop-color="#C4C2FF" />
+              <stop offset="1" stop-color="#A48FFF" />
             </linearGradient>
             <linearGradient
               id="paint2_linear_69_10"
@@ -86,8 +86,8 @@ export default async function Image() {
               y2="85"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopOpacity="0.1" />
-              <stop offset="1" stopOpacity="0.05" />
+              <stop stop-opacity="0.1" />
+              <stop offset="1" stop-opacity="0.05" />
             </linearGradient>
             <linearGradient
               id="paint3_linear_69_10"
@@ -97,8 +97,8 @@ export default async function Image() {
               y2="42.2595"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="#8FAFFF" />
-              <stop offset="1" stopColor="#C4C2FF" />
+              <stop stop-color="#8FAFFF" />
+              <stop offset="1" stop-color="#C4C2FF" />
             </linearGradient>
             <linearGradient
               id="paint4_linear_69_10"
@@ -108,8 +108,8 @@ export default async function Image() {
               y2="14.9999"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopOpacity="0.1" />
-              <stop offset="1" stopOpacity="0.05" />
+              <stop stop-opacity="0.1" />
+              <stop offset="1" stop-opacity="0.05" />
             </linearGradient>
           </defs>
         </svg>
