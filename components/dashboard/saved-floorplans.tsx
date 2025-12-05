@@ -8,6 +8,7 @@ import {
   List,
   Search,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import {
@@ -43,6 +44,7 @@ export function SavedFloorPlans({ data }: { data: FloorplansDataType }) {
       ...folder,
       plans: folder.plans,
     })) || [];
+  const router = useRouter();
 
   const initialFloorPlans: FloorPlan[] = data?.floorplans || [];
 
@@ -265,7 +267,7 @@ export function SavedFloorPlans({ data }: { data: FloorplansDataType }) {
         setNewFolderDialogOpen(false);
         setNewFolderName("");
         // Reload page to get fresh data with correct IDs
-        window.location.reload();
+        router.refresh();
       } else {
         toast.error(result.message);
       }
