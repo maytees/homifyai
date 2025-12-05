@@ -42,23 +42,19 @@ export function HeroSection() {
           </Button>
         </div>
 
-        <div className="mt-16 border p-8">
-          <div className="aspect-video bg-muted flex items-center justify-center">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-8 mb-4">
-                <div className="w-24 h-24 border-2 border-dashed flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">
-                    Blueprint
-                  </span>
-                </div>
-                <ArrowRight className="w-6 h-6 text-muted-foreground" />
-                <div className="w-24 h-24 border-2 flex items-center justify-center bg-foreground/5">
-                  <span className="text-xs text-muted-foreground">Staged</span>
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Interactive demo preview
-              </p>
+        <div className="flex flex-row w-full items-center justify-center">
+          <div className="mt-16 max-w-[560px] max-h-[315px] items-center border p-0">
+            <div className="aspect-video h-full w-full">
+              <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/pxNxSyL9540?si=bH1H4JNwDhCZHf09"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
         </div>
