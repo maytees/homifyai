@@ -8,7 +8,7 @@ import { WhoIsThisFor } from "@/components/who-is-this-for";
 export const metadata: Metadata = {
   title: "AI-Powered Floor Plan Staging - Transform Your Property Listings",
   description:
-    "Transform floor plans into beautifully staged interiors with AI. Professional interior design staging in seconds. 5 free credits to start, then $12/month for 20 generations.",
+    "Transform floor plans into beautifully staged interiors with AI. Professional interior design staging in under a minute. 5 free credits to start, then $12/month for 20 generations.",
   alternates: {
     canonical: "/",
   },

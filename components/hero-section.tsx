@@ -30,7 +30,7 @@ export function HeroSection() {
 
         <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto text-balance">
           Upload your blueprint, choose a style, and let AI transform it into a
-          fully furnished visualization in seconds.
+          fully furnished visualization in under a minute.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

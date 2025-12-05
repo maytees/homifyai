@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | Spacemint AI",
   },
   description:
-    "Transform floor plans into beautifully staged interiors with AI. Professional interior design staging in seconds. Perfect for real estate agents, home sellers, and property developers.",
+    "Transform floor plans into beautifully staged interiors with AI. Professional interior design staging in under a minute. Perfect for real estate agents, home sellers, and property developers.",
   keywords: [
     "AI floor plan staging",
     "virtual staging",
