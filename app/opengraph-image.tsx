@@ -11,117 +11,179 @@ export const contentType = "image/png";
 
 export default async function Image() {
   return new ImageResponse(
-    (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#ffffff",
+        backgroundImage:
+          "linear-gradient(to bottom right, #f8f9fa 0%, #e9ecef 100%)",
+      }}
+    >
+      {/* Logo using the actual logo.svg design */}
       <div
         style={{
-          height: "100%",
-          width: "100%",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ffffff",
-          backgroundImage:
-            "linear-gradient(to bottom right, #f8f9fa 0%, #e9ecef 100%)",
+          marginBottom: 40,
         }}
       >
-        {/* Logo/Icon placeholder */}
+        {/** biome-ignore lint/a11y/noSvgWithoutTitle: goon*/}
+        <svg
+          width="120"
+          height="120"
+          viewBox="0 0 100 100"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 33.2C0 5.8598 5.8598 0 33.2 0H66.8C94.1402 0 100 5.8598 100 33.2V66.8C100 94.1402 94.1402 100 66.8 100H33.2C5.8598 100 0 94.1402 0 66.8V33.2Z"
+            fill="url(#paint0_linear_69_10)"
+          />
+          <path
+            d="M68.2854 23.9368L34.4444 60.7853L51.7014 79.5759C56.7459 85.0687 61.813 85.8526 66.419 84.2903C83.4115 78.5268 85 55.6583 85 37.715L85 30.4475C85 25.1315 80.6906 20.8221 75.3747 20.8221C72.6798 20.8221 70.1083 21.9519 68.2854 23.9368Z"
+            fill="url(#paint1_linear_69_10)"
+            stroke="url(#paint2_linear_69_10)"
+          />
+          <path
+            d="M29.1424 66.874L57.7778 35.5703L43.1758 19.6076C38.9118 14.9463 34.6287 14.2769 30.7345 15.5986C16.3183 20.4913 15 39.9136 15 55.1374L15 61.3813C15 65.8757 18.6434 69.5192 23.1379 69.5192C25.4219 69.5192 27.6008 68.5593 29.1424 66.874Z"
+            fill="url(#paint3_linear_69_10)"
+            stroke="url(#paint4_linear_69_10)"
+          />
+          <defs>
+            <linearGradient
+              id="paint0_linear_69_10"
+              x1="37"
+              y1="36"
+              x2="123.5"
+              y2="123.5"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#1B1B1B" />
+              <stop offset="1" />
+            </linearGradient>
+            <linearGradient
+              id="paint1_linear_69_10"
+              x1="79.1667"
+              y1="82.4871"
+              x2="32.4743"
+              y2="56.4431"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#C4C2FF" />
+              <stop offset="1" stopColor="#A48FFF" />
+            </linearGradient>
+            <linearGradient
+              id="paint2_linear_69_10"
+              x1="59.7222"
+              y1="20.8221"
+              x2="59.7222"
+              y2="85"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopOpacity="0.1" />
+              <stop offset="1" stopOpacity="0.05" />
+            </linearGradient>
+            <linearGradient
+              id="paint3_linear_69_10"
+              x1="57.7778"
+              y1="42.2595"
+              x2="15"
+              y2="42.2595"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#8FAFFF" />
+              <stop offset="1" stopColor="#C4C2FF" />
+            </linearGradient>
+            <linearGradient
+              id="paint4_linear_69_10"
+              x1="36.3889"
+              y1="69.5192"
+              x2="36.3889"
+              y2="14.9999"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopOpacity="0.1" />
+              <stop offset="1" stopOpacity="0.05" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* Title */}
+      <div
+        style={{
+          fontSize: 72,
+          fontWeight: "bold",
+          background: "linear-gradient(to right, #392e58, #6b5b95)",
+          backgroundClip: "text",
+          color: "transparent",
+          marginBottom: 20,
+          textAlign: "center",
+          padding: "0 40px",
+        }}
+      >
+        Spacemint AI
+      </div>
+
+      {/* Subtitle */}
+      <div
+        style={{
+          fontSize: 36,
+          color: "#6c757d",
+          textAlign: "center",
+          maxWidth: "80%",
+          lineHeight: 1.4,
+        }}
+      >
+        Transform Floor Plans into Beautifully Staged Interiors with AI
+      </div>
+
+      {/* Features */}
+      <div
+        style={{
+          display: "flex",
+          marginTop: 60,
+          gap: 40,
+        }}
+      >
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            marginBottom: 40,
+            fontSize: 24,
+            color: "#495057",
           }}
         >
-          <div
-            style={{
-              width: 120,
-              height: 120,
-              borderRadius: 24,
-              backgroundColor: "#392e58",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 64,
-              fontWeight: "bold",
-              color: "white",
-            }}
-          >
-            SM
-          </div>
+          ✨ AI-Powered
         </div>
-
-        {/* Title */}
-        <div
-          style={{
-            fontSize: 72,
-            fontWeight: "bold",
-            background: "linear-gradient(to right, #392e58, #6b5b95)",
-            backgroundClip: "text",
-            color: "transparent",
-            marginBottom: 20,
-            textAlign: "center",
-            padding: "0 40px",
-          }}
-        >
-          Spacemint AI
-        </div>
-
-        {/* Subtitle */}
-        <div
-          style={{
-            fontSize: 36,
-            color: "#6c757d",
-            textAlign: "center",
-            maxWidth: "80%",
-            lineHeight: 1.4,
-          }}
-        >
-          Transform Floor Plans into Beautifully Staged Interiors with AI
-        </div>
-
-        {/* Features */}
         <div
           style={{
             display: "flex",
-            marginTop: 60,
-            gap: 40,
+            alignItems: "center",
+            fontSize: 24,
+            color: "#495057",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: 24,
-              color: "#495057",
-            }}
-          >
-            ✨ AI-Powered
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: 24,
-              color: "#495057",
-            }}
-          >
-            ⚡ Instant Results
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              fontSize: 24,
-              color: "#495057",
-            }}
-          >
-            🏠 22+ Styles
-          </div>
+          ⚡ Instant Results
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            fontSize: 24,
+            color: "#495057",
+          }}
+        >
+          🏠 22+ Styles
         </div>
       </div>
-    ),
+    </div>,
     {
       ...size,
     },
