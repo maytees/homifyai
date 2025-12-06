@@ -16,7 +16,7 @@ export default function TermsPage() {
           <span>Last Updated: December 1, 2025</span>
         </div>
         {/* Decorative line */}
-        <div className="absolute -left-4 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-primary/20 to-transparent" />
+        <div className="absolute -left-4 top-0 bottom-0 w-px bg-linear-to-b from-primary/50 via-primary/20 to-transparent" />
       </div>
 
       <div className="space-y-12">

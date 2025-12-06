@@ -151,25 +151,7 @@ export default function TransformFloorPlan() {
     setIsGenerating(true);
 
     try {
-      // Upload file to S3 first
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", selectedFile);
-
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: uploadFormData,
-      });
-
-      if (!uploadRes.ok) {
-        const uploadError = await uploadRes.json();
-        toast.error(uploadError.error || "Failed to upload image");
-        setIsGenerating(false);
-        return;
-      }
-
-      const { url: uploadedUrl } = await uploadRes.json();
-
-      // Now generate with the uploaded URL using the style's prompt description
+      // Generate with the file directly using the style's prompt description
       const styleDescription = getStylePromptDescription(selectedStyle);
       const selectedStyleData = getStyleById(selectedStyle);
 
@@ -184,10 +166,13 @@ Additional parameters:
 ${notes ? `- Additional notes: ${notes}` : ""}
 `.trim();
 
+      const generateFormData = new FormData();
+      generateFormData.append("image", selectedFile);
+      generateFormData.append("prompt", promptText);
+
       const res = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: promptText, imageUrl: uploadedUrl }),
+        body: generateFormData,
       });
 
       if (!res.ok) {
@@ -229,13 +214,10 @@ ${notes ? `- Additional notes: ${notes}` : ""}
 
       // Automatically save to library
       try {
-        const [referenceFile, generatedFile] = await Promise.all([
-          blobUrlToFile(uploadedUrl, "reference-image.png"),
-          blobUrlToFile(src, "generated-image.png"),
-        ]);
+        const generatedFile = await blobUrlToFile(src, "generated-image.png");
 
         const formData = new FormData();
-        formData.append("referenceImage", referenceFile);
+        formData.append("referenceImage", selectedFile);
         formData.append("generatedImage", generatedFile);
         formData.append(
           "stagingStyle",

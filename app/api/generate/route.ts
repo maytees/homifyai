@@ -80,8 +80,20 @@ export async function POST(req: Request) {
     );
   }
 
-  const { prompt, imageUrl }: { prompt: string; imageUrl: string } =
-    await req.json();
+  // Parse FormData to get the file and prompt
+  const formData = await req.formData();
+  const prompt = formData.get("prompt") as string;
+  const imageFile = formData.get("image") as File;
+
+  if (!prompt || !imageFile) {
+    return Response.json(
+      { error: "Missing required fields: prompt and image" },
+      { status: 400 },
+    );
+  }
+
+  // Convert File to Buffer for AI SDK
+  const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
 
   // DEVELOPMENT MODE: Return dummy data
   if (USE_DUMMY_DATA) {
@@ -180,7 +192,7 @@ P-Tac = Air conditioning unit. WIC/WIR = Walk-in closet/wardrobe. ENS = Ensuite 
           { type: "text", text: prompt },
           {
             type: "image",
-            image: new URL(imageUrl),
+            image: imageBuffer,
           },
         ],
       },
