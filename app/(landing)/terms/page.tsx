@@ -26,8 +26,8 @@ export default function TermsPage() {
           </h2>
           <p className="text-muted-foreground leading-relaxed">
             By accessing or using Spacemint AI ("Service"), you agree to be
-            bound by these Terms of Service. If you do not agree to these
-            terms, please do not use the Service.
+            bound by these Terms of Service. If you do not agree to these terms,
+            please do not use the Service.
           </p>
         </section>
 
@@ -65,7 +65,9 @@ export default function TermsPage() {
           <ul className="space-y-2.5 ml-4">
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-primary mt-1.5">→</span>
-              <span>Maintaining the confidentiality of your account credentials</span>
+              <span>
+                Maintaining the confidentiality of your account credentials
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-primary mt-1.5">→</span>
@@ -86,23 +88,35 @@ export default function TermsPage() {
           <h2 className="text-2xl font-semibold mb-4 font-mono">
             <span className="text-primary">[05]</span> Acceptable Use
           </h2>
-          <p className="text-muted-foreground leading-relaxed mb-4">You agree NOT to use the Service to:</p>
+          <p className="text-muted-foreground leading-relaxed mb-4">
+            You agree NOT to use the Service to:
+          </p>
           <ul className="space-y-2.5 ml-4 mb-4">
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-destructive mt-1.5">×</span>
-              <span>Generate inappropriate, offensive, or explicit content of any kind</span>
+              <span>
+                Generate inappropriate, offensive, or explicit content of any
+                kind
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-destructive mt-1.5">×</span>
-              <span>Engage in any illegal activities or violate any applicable laws</span>
+              <span>
+                Engage in any illegal activities or violate any applicable laws
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-destructive mt-1.5">×</span>
-              <span>Upload malicious code, viruses, or any harmful software</span>
+              <span>
+                Upload malicious code, viruses, or any harmful software
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-destructive mt-1.5">×</span>
-              <span>Attempt to gain unauthorized access to the Service or other users' accounts</span>
+              <span>
+                Attempt to gain unauthorized access to the Service or other
+                users' accounts
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-destructive mt-1.5">×</span>
@@ -110,7 +124,10 @@ export default function TermsPage() {
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-destructive mt-1.5">×</span>
-              <span>Use the Service in any way that could damage, disable, or impair the Service</span>
+              <span>
+                Use the Service in any way that could damage, disable, or impair
+                the Service
+              </span>
             </li>
           </ul>
           <p className="text-muted-foreground leading-relaxed">
@@ -130,19 +147,30 @@ export default function TermsPage() {
           <ul className="space-y-2.5 ml-4">
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-primary mt-1.5">→</span>
-              <span>Free Plan: 5 generations per month with watermarked results</span>
+              <span>
+                Free Plan: 5 generations per month with watermarked results
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-primary mt-1.5">→</span>
-              <span>Pro Plan: $12/month for 20 credits plus overage billing at $0.50 per additional credit</span>
+              <span>
+                Pro Plan: $12/month for 20 credits plus overage billing at $0.50
+                per additional credit
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-primary mt-1.5">→</span>
-              <span>Subscriptions automatically renew unless cancelled before the renewal date</span>
+              <span>
+                Subscriptions automatically renew unless cancelled before the
+                renewal date
+              </span>
             </li>
             <li className="flex items-start gap-3 text-muted-foreground">
               <span className="text-primary mt-1.5">→</span>
-              <span>You can cancel your subscription at any time through your account settings</span>
+              <span>
+                You can cancel your subscription at any time through your
+                account settings
+              </span>
             </li>
           </ul>
         </section>
@@ -156,10 +184,10 @@ export default function TermsPage() {
             or credit purchases. However, if you experience technical issues or
             have special circumstances, please contact us at{" "}
             <Link
-              href="mailto:support@spacemintai.com"
+              href="mailto:spacemintaiapp@gmail.com"
               className="text-primary underline hover:text-primary/80 transition-colors font-mono"
             >
-              support@spacemintai.com
+              spacemintaiapp@gmail.com
             </Link>{" "}
             to discuss your situation.
           </p>
@@ -171,27 +199,29 @@ export default function TermsPage() {
           </h2>
           <div className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Your Content:</strong> You retain ownership of the floor
-              plans you upload. By using the Service, you grant us a license to
-              process your uploads solely for the purpose of providing the
-              Service.
+              <strong className="text-foreground">Your Content:</strong> You
+              retain ownership of the floor plans you upload. By using the
+              Service, you grant us a license to process your uploads solely for
+              the purpose of providing the Service.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Generated Content:</strong> You own the 3D renderings
-              generated by the Service. You may download, use, and distribute your
-              generated content as you see fit.
+              <strong className="text-foreground">Generated Content:</strong>{" "}
+              You own the 3D renderings generated by the Service. You may
+              download, use, and distribute your generated content as you see
+              fit.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Our Platform:</strong> The Service, including its code,
-              design, and branding, is owned by Spacemint AI and protected by
-              intellectual property laws.
+              <strong className="text-foreground">Our Platform:</strong> The
+              Service, including its code, design, and branding, is owned by
+              Spacemint AI and protected by intellectual property laws.
             </p>
           </div>
         </section>
 
         <section className="relative pl-6 border-l border-border/40">
           <h2 className="text-2xl font-semibold mb-4 font-mono">
-            <span className="text-primary">[09]</span> Data Export and Portability
+            <span className="text-primary">[09]</span> Data Export and
+            Portability
           </h2>
           <p className="text-muted-foreground leading-relaxed">
             You may download and export your generated floor plans at any time
@@ -206,14 +236,15 @@ export default function TermsPage() {
           </h2>
           <div className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">By You:</strong> You may delete your account at any time
-              through your account settings. Upon deletion, your data will be
-              immediately and permanently removed from our servers.
+              <strong className="text-foreground">By You:</strong> You may
+              delete your account at any time through your account settings.
+              Upon deletion, your data will be immediately and permanently
+              removed from our servers.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">By Us:</strong> We reserve the right to suspend or terminate
-              your account if you violate these Terms of Service or engage in
-              fraudulent or illegal activities.
+              <strong className="text-foreground">By Us:</strong> We reserve the
+              right to suspend or terminate your account if you violate these
+              Terms of Service or engage in fraudulent or illegal activities.
             </p>
           </div>
         </section>
@@ -223,9 +254,10 @@ export default function TermsPage() {
             <span className="text-primary">[11]</span> Disclaimer of Warranties
           </h2>
           <p className="text-muted-foreground leading-relaxed font-mono text-xs uppercase tracking-wide">
-            THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES
-            OF ANY KIND, EITHER EXPRESS OR IMPLIED. WE DO NOT GUARANTEE THAT THE
-            SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR COMPLETELY SECURE.
+            THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT
+            WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. WE DO NOT
+            GUARANTEE THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR
+            COMPLETELY SECURE.
           </p>
         </section>
 
@@ -247,9 +279,9 @@ export default function TermsPage() {
           </h2>
           <p className="text-muted-foreground leading-relaxed">
             We reserve the right to modify these Terms of Service at any time.
-            We will notify users of any material changes via email or through the
-            Service. Your continued use of the Service after changes constitutes
-            acceptance of the updated terms.
+            We will notify users of any material changes via email or through
+            the Service. Your continued use of the Service after changes
+            constitutes acceptance of the updated terms.
           </p>
         </section>
 
@@ -276,10 +308,10 @@ export default function TermsPage() {
             <p className="text-muted-foreground">
               <strong className="text-foreground">Email:</strong>{" "}
               <Link
-                href="mailto:support@spacemintai.com"
+                href="mailto:spacemintaiapp@gmail.com"
                 className="text-primary underline hover:text-primary/80 transition-colors"
               >
-                support@spacemintai.com
+                spacemintaiapp@gmail.com
               </Link>
             </p>
             <p className="text-muted-foreground">
